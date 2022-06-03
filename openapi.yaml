@@ -1,0 +1,672 @@
+openapi: 3.0.1
+info:
+  title: 'E-commerce REST API '
+  version: 1.0.0
+  description: A basic API for working a basic back end e-commerce server
+paths:
+  /users:
+    summary: Requests to this path will query users data from the database
+    description: 'Path will handle requests related to data in the users table. '
+    get:
+      summary: Get all users
+      description: Will return all user data from the database
+      operationId: get_users
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              examples:
+                Users Array:
+                  value: >-
+                    { "users": [ {"id": "string", "username": "string"}, {"id":
+                    "string", "username": "string"} ] }
+      tags:
+        - Users
+  /products:
+    summary: Products data
+    description: Requests to this path will query products data.
+    get:
+      summary: Get products
+      description: >-
+        This operation will return products from the items table with varying
+        degrees of specificity depending on URL query filters. And empty query
+        string will return all products. Incorret data will throw an error.
+      operationId: get_products
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              examples:
+                Items Array:
+                  value: >-
+                    { "Products": [ { "id": "string", "name": "string",
+                    "category": "string", "price": 0 },  { "id": "string",
+                    "name": "string", "category": "string", "price": 0 } ] }
+      tags:
+        - Products
+    post:
+      summary: Create new product
+      description: >-
+        Product data will be parsed form the request body and correctly
+        formatted before adding to the database.
+      operationId: post_products
+      requestBody:
+        description: Item Object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              examples:
+                New item:
+                  value: >-
+                    { "id": "string", "name": "string", "category": "string",
+                    "price": 0 }
+        '400':
+          description: Bad Request
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error Message:
+                  value: Invalid input
+      tags:
+        - Products
+  /carts:
+    summary: Requests to this path will query cart_items data from teh database.
+    description: 'Path will handle requests made related to data in the  cart_items table. '
+    post:
+      summary: Create new cart
+      description: >-
+        This operation will create a new cart with a unique id which will be
+        asociated with a specific users id.
+      operationId: post_cart
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              examples:
+                New Cart:
+                  value: '{ "cart_id": "string", "user_id": "string", "items": [] }'
+        '401':
+          description: Unauthorized
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Authorisation required.
+      tags:
+        - Carts
+        - Required login
+  /login:
+    summary: Requests to this path are related to authentication and authorisation.
+    description: 'Path will handle requests for logging in users. '
+    post:
+      summary: User log-in
+      description: >-
+        Users credentials will be extracted from the request body and checked
+        against the database. If data matches then a session is started and user
+        is granted access to their protected resources. Else the an error is
+        sent and user is prompted to re-attempt.
+      operationId: post_login
+      requestBody:
+        description: Item Object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login_details'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              examples:
+                Login Details:
+                  value: '{ "username": "string", "password": "string" }'
+      tags:
+        - Authentication
+  /logout:
+    summary: Requests to this path will log users out.
+    description: >-
+      Path will terminate user session and redirect users away from protected
+      resources. 
+    get:
+      summary: User log-out
+      description: >-
+        This will terminate the current session and redirect the user to the log
+        in prompt
+      operationId: get_logout
+      responses:
+        '200':
+          description: Ok
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Success message:
+                  value: User was logged out
+      tags:
+        - Authentication
+  /register:
+    summary: >-
+      Requests to this path are related to adding new user information to the
+      database.
+    description: 'Path will return resources for the registration of new users. '
+    post:
+      summary: Register a new user
+      description: >-
+        Given data is properly formatted, it will be parsed from the request
+        body and it will be added to the database. An error will be thrown if
+        you attempt to registar an existing username/email.
+      operationId: post_register
+      requestBody:
+        description: User Object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              examples:
+                New user:
+                  value: >-
+                    { "id": "string", "username": "string", "email": "string",
+                    "password": "string" }
+        '400':
+          description: Bad Request
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error Message:
+                  value: Invalid input
+      tags:
+        - Register
+  /users/{id}:
+    summary: Specific user
+    description: Requests to this path will query a single user by id.
+    get:
+      summary: Get specific user
+      description: >-
+        Extract the id parameter and use it to return a the matching users data
+        from the database.
+      operationId: get_users_by_id
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              examples:
+                User info:
+                  value: >-
+                    { "id": "string", "username": "string", "email": "string",
+                    "password": "string" }
+        '401':
+          description: Unauthorized
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Authorisation required.
+      tags:
+        - Users
+        - Required login
+    put:
+      summary: Update specific user
+      description: >-
+        This operation will extract new data from the request body and make sure
+        it is properly formatted before updating the user whos id matches the id
+        parameter. 
+      operationId: put_users_by_id
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: User Object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              examples:
+                Updated user:
+                  value: >-
+                    { "id": "string", "username": "string", "email": "string",
+                    "password": "string" }
+        '401':
+          description: Unauthorized
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Authorisation required.
+      tags:
+        - Users
+        - Required login
+  /products/{id}:
+    summary: Product data
+    description: Requests will query a single product by id.
+    get:
+      summary: Get a product
+      description: >-
+        This will extract the id parameter and use it to return the matching
+        item from the database. An error is thrown if id is not found. 
+      operationId: get_products_by_id
+      parameters:
+        - name: id
+          in: path
+          description: Item ID.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              examples:
+                Item:
+                  value: >-
+                    { "id": "string", "name": "string", "category": "string",
+                    "price": 0 }
+        '404':
+          description: Not found
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Resource not found.
+      tags:
+        - Products
+    delete:
+      summary: Delete a product
+      description: >-
+        Product matching the id parameter will be deleted from the database. An
+        error will be thrown if id is not found.
+      operationId: delete_products_by_id
+      parameters:
+        - name: id
+          in: path
+          description: Item ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No content
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Success message:
+                  value: Item removed.
+        '404':
+          description: Not found
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Resource not found.
+      tags:
+        - Products
+    put:
+      summary: Update product info
+      description: >-
+        New product data will be parsed from the request body and correctly
+        formatted before replacing the old product's details in the database. An
+        error is thrown if data isnt properly formatted.
+      operationId: put_products_by_id
+      parameters:
+        - name: id
+          in: path
+          description: Item ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Item Object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              examples:
+                Updated Item:
+                  value: >-
+                    { "id": "string", "name": "string", "category": "string",
+                    "price": 0 }
+        '404':
+          description: Not found
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Resource not found.
+      tags:
+        - Products
+  /carts/{id}:
+    summary: Edit specific cart
+    description: Requests to this path will modify a specific cart.
+    post:
+      summary: Add item to cart
+      description: >-
+        Item id will be parsed from the request body and asociated to the cart
+        whos id matches the id parameter inside the database. 
+      operationId: post_item_by_carts_id
+      parameters:
+        - name: id
+          in: path
+          description: Cart ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Item Object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cart_item'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              examples:
+                Updated Cart:
+                  value: >-
+                    { "cart_id": "string", "user_id": "string", "items": [{"id":
+                    "string"}] }
+        '401':
+          description: Unauthorized
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Authorisation required.
+      tags:
+        - Carts
+        - Required login
+    delete:
+      summary: Delete cart item
+      description: >-
+        Item id will be parsed from the request body and used to delete that
+        item from the cart with the matching id parameter from the database.
+      operationId: delete_item_by_carts_id
+      parameters:
+        - name: id
+          in: path
+          description: Cart ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Success message:
+                  value: Cart item removed.
+        '401':
+          description: Unauthorized
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Authorisation required.
+        '404':
+          description: Not Found
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Cart item not found
+      tags:
+        - Carts
+        - Required login
+    get:
+      summary: Retrieve a specific cart
+      description: 'Retrieve a specific cart from the database using the id parameter. '
+      operationId: get_carts_by_id
+      parameters:
+        - name: id
+          in: path
+          description: The id of the order.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              examples:
+                Cart instance:
+                  value: >-
+                    { "cart_id": "string", "user_id": "string", "items": [ {
+                    "id": "string" }, { "id": "string" } ] }
+        '401':
+          description: Unauthorized
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Authorisation required.
+        '404':
+          description: Not Found
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Cart not found.
+      tags:
+        - Carts
+        - Required login
+  /carts/{id}/checkout:
+    summary: Create order
+    description: >-
+      Retrieve cart by id, create a new order with the given items and delete
+      the cart
+    post:
+      summary: Create new order
+      description: >-
+        Validate cart existence. Process payment and ensure that details are
+        accurate. Create a new order containing cart items of a specific id and
+        add it to the database. Afterwards, delete the old cart.
+      operationId: post_carts_checkout
+      parameters:
+        - name: id
+          in: path
+          description: Cart ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: User Object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              examples:
+                New Order Object:
+                  value: |-
+                    {
+                      "id": "string",
+                      "user_id": "string",
+                      "cart_id": "string",
+                      "items": {},
+                      "total_price": 0
+                    }
+        '401':
+          description: Unauthorized
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Authorisation required.
+      tags:
+        - Orders
+        - Required login
+  /orders:
+    summary: Order data
+    description: Manipulate orders data
+    get:
+      summary: Return order history
+      description: >-
+        Will check if user is authenticated and will retrieve the users order
+        history using user id saved in session store.
+      operationId: get_orders
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              examples:
+                Order history:
+                  value:
+                    orders:
+                      - id: string
+                        cart_id: string
+                        items: {}
+                        total_price: 0
+                      - id: string
+                        cart_id: string
+                        items: {}
+                        total_price: 0
+        '401':
+          description: Unauthorized
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Authorisation required.
+      tags:
+        - Orders
+        - Required login
+  /orders/{id}:
+    summary: Get an order
+    description: Retrieve an order by id
+    get:
+      summary: Get order
+      description: Retrieve order from the database using id parameter
+      operationId: get_orders_by_id
+      parameters:
+        - name: id
+          in: path
+          description: Order ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ok
+          content:
+            application/json:
+              examples:
+                Order instance:
+                  value: |-
+                    {
+                      "id": "string",
+                      "cart_id": "string",
+                      "items": {},
+                      "total_price": 0
+                    }
+        '401':
+          description: Unauthorized
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Authorisation required.
+      tags:
+        - Orders
+        - Required login
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+      xml:
+        name: User
+    Item:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+      xml:
+        name: Item
+    Cart_item:
+      type: object
+      properties:
+        id:
+          type: string
+      xml:
+        name: Cart_item
+    Login_details:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      xml:
+        name: Login_details
+    Order:
+      type: object
+      properties:
+        id:
+          type: string
+        user_id:
+          type: string
+        cart_id:
+          type: string
+        items:
+          type: object
+        total_price:
+          type: number
+      xml:
+        name: Order
