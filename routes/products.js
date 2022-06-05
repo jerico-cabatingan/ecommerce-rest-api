@@ -1,24 +1,16 @@
+const { request } = require('express');
 const express = require('express');
 const dbQuery = require('../db/queries');
 const productsRouter = express.Router();
 
 productsRouter.get('/', dbQuery.getProducts);
 
-productsRouter.post('/', (req, res , next) => {
+productsRouter.post('/', dbQuery.postProduct);
 
-});
+productsRouter.get('/:id', dbQuery.getProductById);
 
-productsRouter.get('/{id}', (req, res , next) => {
+productsRouter.delete('/:id',dbQuery.getIds, dbQuery.deleteProductById);
 
-});
-
-productsRouter.delete('/{id}', (req, res , next) => {
-
-});
-
-
-productsRouter.put('/{id}', (req, res , next) => {
-
-});
+productsRouter.put('/:id', dbQuery.getIds, dbQuery.updateProductById);
 
 module.exports = productsRouter;

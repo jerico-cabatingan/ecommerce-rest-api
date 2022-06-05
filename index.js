@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
-const dbQuery = require("./db/queries");
+
+const bodyParser = require("body-parser"); 
+app.use(bodyParser.json());
 
 app.get('/', (request, response) => {
   response.json({ info: 'Node.js, Express, and Postgres API' })
@@ -17,6 +19,7 @@ const yaml = require('js-yaml');
 const fs = require('fs');
 const path = require('path');
 const { request } = require('http');
+const res = require('express/lib/response');
 const swaggerDocument = yaml.load(fs.readFileSync(path.resolve(__dirname, './openapi.yaml'), 'utf8'));
 
 // Return Swagger UI documentation to /api-docs url
