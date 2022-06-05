@@ -6,13 +6,17 @@ app.get('/', (request, response) => {
   response.json({ info: 'Node.js, Express, and Postgres API' })
 })
 
-app.get('/users', dbQuery.getUsers);
+//////////////////// EXPRESS ROUTERS /////////////////////////
 
+const productsRouter = require('./routes/products');
+app.use('/products', productsRouter)
+
+//////////////////// SWAGGER CONFIG /////////////////////////
 const swaggerUi = require('swagger-ui-express');
 const yaml = require('js-yaml');
 const fs = require('fs');
 const path = require('path');
-const res = require('express/lib/response');
+const { request } = require('http');
 const swaggerDocument = yaml.load(fs.readFileSync(path.resolve(__dirname, './openapi.yaml'), 'utf8'));
 
 // Return Swagger UI documentation to /api-docs url
