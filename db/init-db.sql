@@ -51,9 +51,3 @@ CREATE TABLE orders (
     cart_id varchar REFERENCES carts(id) UNIQUE,
     total_price money NOT NULL
 );
-
-
-INSERT INTO users (id, email, username, password) VALUES 
-  ('Jerry', 'jerry@example.com', 'jerryboy', 'password1'), 
-  ('George', 'george@example.com', 'georgeboy', 'password2');
-  

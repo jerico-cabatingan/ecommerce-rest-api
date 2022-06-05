@@ -41,9 +41,20 @@ paths:
               examples:
                 Items Array:
                   value: >-
-                    { "Products": [ { "id": "string", "name": "string",
-                    "category": "string", "price": 0 },  { "id": "string",
-                    "name": "string", "category": "string", "price": 0 } ] }
+                    [
+                      {
+                          "id": "1",
+                          "name": "Hammer",
+                          "category": "Tools",
+                          "price": "$15.99"
+                      },
+                      {
+                          "id": "2",
+                          "name": "Banana",
+                          "category": "Food",
+                          "price": "$1.00"
+                      }
+                    ]
       tags:
         - Products
     post:
@@ -62,12 +73,15 @@ paths:
         '201':
           description: Created
           content:
-            application/json:
+            text/plain; charset=utf-8:
               examples:
                 New item:
                   value: >-
-                    { "id": "string", "name": "string", "category": "string",
-                    "price": 0 }
+                    Your product was created:
+                      id: 30
+                      name: Salt Lamp
+                      category: Household
+                      price: 18.49
         '400':
           description: Bad Request
           content:
@@ -289,15 +303,19 @@ paths:
               examples:
                 Item:
                   value: >-
-                    { "id": "string", "name": "string", "category": "string",
-                    "price": 0 }
+                    {
+                      "id": "30",
+                      "name": "Salt Lamp",
+                      "category": "Household",
+                      "price": "$18.49"
+                    }
         '404':
           description: Not found
           content:
             text/plain; charset=utf-8:
               examples:
                 Error message:
-                  value: Resource not found.
+                  value: Item does not exist
       tags:
         - Products
     delete:
@@ -314,20 +332,20 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        '200':
           description: No content
           content:
             text/plain; charset=utf-8:
               examples:
                 Success message:
-                  value: Item removed.
+                  value: 'Item with ID: 100 was removed'
         '404':
           description: Not found
           content:
             text/plain; charset=utf-8:
               examples:
                 Error message:
-                  value: Resource not found.
+                  value: 'Item with ID: 100 was not found'
       tags:
         - Products
     put:
@@ -354,19 +372,21 @@ paths:
         '200':
           description: Ok
           content:
-            application/json:
+            text/plain; charset=utf-8:
               examples:
                 Updated Item:
                   value: >-
-                    { "id": "string", "name": "string", "category": "string",
-                    "price": 0 }
+                    Item with ID: 100 was updated to:
+                      name: Fake Hundred Dollar Bill
+                      category: Toys
+                      price: 100
         '404':
           description: Not found
           content:
             text/plain; charset=utf-8:
               examples:
                 Error message:
-                  value: Resource not found.
+                  value: 'Item with ID: 100 was not found'
       tags:
         - Products
   /carts/{id}:
