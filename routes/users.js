@@ -1,13 +1,14 @@
 const express = require('express');
-const dbQuery = require('../db/users-queries');
 const usersRouter = express.Router();
+const dbQuery = require('../db/users-queries');
+const auth = require('./middleware');
 
 usersRouter.post('/register', dbQuery.submitNewUser);
 
 usersRouter.get('/', dbQuery.getUsers);
 
-usersRouter.get('/:id', dbQuery.getUserById);
+usersRouter.get('/:id', auth.checkAuthenticated, dbQuery.getUserById);
 
-usersRouter.put('/:id',dbQuery.getIds ,dbQuery.updateUser);
+usersRouter.put('/:id', auth.checkAuthenticated, dbQuery.getIds ,dbQuery.updateUser);
 
 module.exports = usersRouter;

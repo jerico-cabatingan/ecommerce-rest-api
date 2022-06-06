@@ -117,5 +117,5 @@ module.exports = {
   getUserById,
   updateUser,
   getIds,
-  authenticateUser
+  authenticateUser,
 };

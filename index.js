@@ -22,7 +22,6 @@ app.use(
     secret: process.env.SESSION_SECRET,
     cookie: { 
       maxAge: 1000 * 60 *60 * 24, 
-      secure: true, 
       sameSite: "none" 
     },
     resave: false,
@@ -33,11 +32,21 @@ app.use(
 
 // Configure local log-in strategy
 const usersQuery = require('./db/users-queries');
+const auth = require('./routes/middleware')
 const passport = require('passport');
 const LocalStrategy = require("passport-local").Strategy;
 
 app.use(passport.initialize());
 app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  console.log('Serialising...')
+  done(null, user)
+});
+passport.deserializeUser((user, done) => {
+  console.log('Deserialising...')
+  done(null, user.id);
+});
 
 passport.use(new LocalStrategy(async (username, password, done) => {
   try {
@@ -53,8 +62,34 @@ passport.use(new LocalStrategy(async (username, password, done) => {
   }
 }));
 
+
 app.get('/', (request, response) => {
-  response.json({ info: 'Node.js, Express, and Postgres API' })
+  response.send('Welcome to my Node.js, Express, and Postgres API app. Please authenticate to proceed.')
+}); 
+
+app.post('/login', 
+  passport.authenticate('local', 
+  {failureRedirect: '/'}), (request, response) => {
+
+    console.log(`\n\nrequest.session.passport: ${JSON.stringify(request.session.passport)}`)
+
+    console.log(`request.user: ${JSON.stringify(request.user)}\n\n`)
+
+    response.redirect('/profile');
+  }
+);
+
+app.get('/profile', auth.checkAuthenticated, (request, response) => {
+  response.send(`You are logged in as \n\n id: ${request.user} \n username: ${request.session.passport.user.username}`);
+}); 
+
+app.get('/logout', (request, response) => {
+  request.logout((err) => {
+    if (err) {
+      return next(err); 
+    }
+    response.redirect('/');
+  });
 });
 
 // EXPRESS ROUTERS //
