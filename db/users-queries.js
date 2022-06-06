@@ -90,11 +90,32 @@ const getIds = (request, response, next) => {
   })
 };
 
+const authenticateUser = async (userData) => {
+  const { username, password } = userData;
+  try {
+    const result = await pool.query('SELECT id, username, password FROM users WHERE username = $1', [username]);
+
+    const { id, username: user, password: hashedPassword } = result.rows[0];
+
+    const matchedPassword = await bcrypt.compare(password, hashedPassword);
+
+    if (!matchedPassword) {
+      console.log('Your password was incorrect');
+      return {id, username: user, password: matchedPassword};
+    }
+    return {id, username: user, password: hashedPassword}
+  }
+  catch (err) {
+    console.log('Username does not exist!');
+    return err;
+  }
+}
+
 module.exports = {
   submitNewUser,
   getUsers,
   getUserById,
   updateUser,
-  getIds
+  getIds,
+  authenticateUser
 };
-

@@ -1,9 +1,11 @@
+require('dotenv').config();
+
 const config = {
-	user: "me",
-	password: "password",
-	database: "ecommerce-db",
-	host: "localhost",
-	port: "5432",
+	user: process.env.PG_USER ,
+	password: process.env.PG_PASSWORD,
+	database: process.env.PG_DATABASE,
+	host: process.env.PG_HOST,
+	port: process.env.PG_PORT,
 }
 
 module.exports = config;

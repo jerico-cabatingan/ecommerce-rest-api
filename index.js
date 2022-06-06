@@ -1,8 +1,57 @@
+// Create s an express server
 const express = require('express');
 const app = express();
 
+// Give server access to .env variables
+require('dotenv').config();
+
+// Allow json objects to be parsed from the request body
 const bodyParser = require("body-parser"); 
 app.use(bodyParser.json());
+
+// Allow cross origin resource sharing
+const cors = require('cors');
+app.use(cors())
+
+// Configure sessions
+const session = require('express-session');
+const store = new session.MemoryStore();
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    cookie: { 
+      maxAge: 1000 * 60 *60 * 24, 
+      secure: true, 
+      sameSite: "none" 
+    },
+    resave: false,
+    saveUninitialized: false,
+    store
+  })
+);
+
+// Configure local log-in strategy
+const usersQuery = require('./db/users-queries');
+const passport = require('passport');
+const LocalStrategy = require("passport-local").Strategy;
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(async (username, password, done) => {
+  try {
+    // returns { id: 'id', username: 'example', password: 'hashedPw' }
+    const user = await usersQuery.authenticateUser({ username, password })
+    if (!user || !user.password) {
+      return done(null, false);
+    }
+    return done(null, user);
+  } 
+  catch (err) {
+    return done(err);
+  }
+}));
 
 app.get('/', (request, response) => {
   response.json({ info: 'Node.js, Express, and Postgres API' })
