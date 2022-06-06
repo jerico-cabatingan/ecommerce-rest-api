@@ -20,7 +20,7 @@ const submitNewUser = async (request, response) => {
         response.status(400).send('Username or email is already taken');
         throw error
       }
-      response.status(201).send(`New user: ${username} created.`)
+      response.status(201).send(`New user: "${username}" created.`)
   })
 };
 
@@ -74,7 +74,7 @@ const updateUser = async (request, response) => {
       password: ${hashedPassword}`);
     }
     else if (!userId) {
-      response.status(404).send(`User with ID: ${paramId} not found`)
+      response.status(404).send(`User does not exist`)
     };
   })
 };

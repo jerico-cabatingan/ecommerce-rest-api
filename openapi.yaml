@@ -18,9 +18,21 @@ paths:
             application/json:
               examples:
                 Users Array:
-                  value: >-
-                    { "users": [ {"id": "string", "username": "string"}, {"id":
-                    "string", "username": "string"} ] }
+                  value: |-
+                    [
+                      {
+                          "id": "755f877a-5dee-41bc-a88b-755f2b87070a",
+                          "email": "jerico@jerico.com",
+                          "username": "jericojerico",
+                          "password": "$2b$10$Q5NN5vuXM8L7TbQ/wrDwme8db7c7D2GdZz/ZSdxdP63O676MMNZMu"
+                      },
+                      {
+                          "id": "a35e1d15-835f-4fde-9c85-4642ed481f2d",
+                          "email": "jerico.cabatingan@example.com",
+                          "username": "jerico.cabatingan",
+                          "password": "$2b$10$a9SQALC3dZpE.NkzzDdeYejf4YqjRTVWE1kIGuteZP5J9c1uHUwhy"
+                      }
+                    ]
       tags:
         - Users
   /products:
@@ -40,7 +52,7 @@ paths:
             application/json:
               examples:
                 Items Array:
-                  value: >-
+                  value: |-
                     [
                       {
                           "id": "1",
@@ -76,7 +88,7 @@ paths:
             text/plain; charset=utf-8:
               examples:
                 New item:
-                  value: >-
+                  value: |-
                     Your product was created:
                       id: 30
                       name: Salt Lamp
@@ -166,7 +178,7 @@ paths:
                   value: User was logged out
       tags:
         - Authentication
-  /register:
+  /users/register:
     summary: >-
       Requests to this path are related to adding new user information to the
       database.
@@ -188,21 +200,19 @@ paths:
         '201':
           description: Created
           content:
-            application/json:
+            text/plain; charset=utf-8:
               examples:
                 New user:
-                  value: >-
-                    { "id": "string", "username": "string", "email": "string",
-                    "password": "string" }
+                  value: 'New user: "new.user" created.'
         '400':
           description: Bad Request
           content:
             text/plain; charset=utf-8:
               examples:
                 Error Message:
-                  value: Invalid input
+                  value: Username or email is already taken
       tags:
-        - Register
+        - Users
   /users/{id}:
     summary: Specific user
     description: Requests to this path will query a single user by id.
@@ -226,9 +236,13 @@ paths:
             application/json:
               examples:
                 User info:
-                  value: >-
-                    { "id": "string", "username": "string", "email": "string",
-                    "password": "string" }
+                  value: |-
+                    {
+                        "id": "100",
+                        "email": "onehundred",
+                        "username": "onehundred@example.com",
+                        "password": "$2b$10$WgPzO5g6UCFlmpnUxd8m1evthPIf4E.dw/pWy8cGscUyMbaAJaScu"
+                    }
         '401':
           description: Unauthorized
           content:
@@ -236,6 +250,13 @@ paths:
               examples:
                 Error message:
                   value: Authorisation required.
+        '404':
+          description: Not Found
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error Message:
+                  value: User does not exist
       tags:
         - Users
         - Required login
@@ -263,12 +284,14 @@ paths:
         '200':
           description: Ok
           content:
-            application/json:
+            text/plain; charset=utf-8:
               examples:
                 Updated user:
                   value: >-
-                    { "id": "string", "username": "string", "email": "string",
-                    "password": "string" }
+                   User with ID: 100 was updated to:
+                    email: hundred@example.com
+                    username: hundred
+                    password: $2b$10$cZ7b5bSkDDgQpL3ftyIXZ.UtCDB8otOUqDfb1QRMw7THgXtSzkW..'
         '401':
           description: Unauthorized
           content:
@@ -276,6 +299,13 @@ paths:
               examples:
                 Error message:
                   value: Authorisation required.
+        '404':
+          description: Not Found
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error Message:
+                  value: User does not exist
       tags:
         - Users
         - Required login
@@ -302,7 +332,7 @@ paths:
             application/json:
               examples:
                 Item:
-                  value: >-
+                  value: |-
                     {
                       "id": "30",
                       "name": "Salt Lamp",
@@ -375,7 +405,7 @@ paths:
             text/plain; charset=utf-8:
               examples:
                 Updated Item:
-                  value: >-
+                  value: |-
                     Item with ID: 100 was updated to:
                       name: Fake Hundred Dollar Bill
                       category: Toys
@@ -636,8 +666,6 @@ components:
     User:
       type: object
       properties:
-        id:
-          type: string
         username:
           type: string
         email:
