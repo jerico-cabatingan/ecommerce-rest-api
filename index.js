@@ -6,14 +6,17 @@ app.use(bodyParser.json());
 
 app.get('/', (request, response) => {
   response.json({ info: 'Node.js, Express, and Postgres API' })
-})
+});
 
-//////////////////// EXPRESS ROUTERS /////////////////////////
+// EXPRESS ROUTERS //
 
 const productsRouter = require('./routes/products');
 app.use('/products', productsRouter)
 
-//////////////////// SWAGGER CONFIG /////////////////////////
+const usersRouter = require('./routes/users');
+app.use('/users', usersRouter);
+
+// SWAGGER CONFIG //
 const swaggerUi = require('swagger-ui-express');
 const yaml = require('js-yaml');
 const fs = require('fs');

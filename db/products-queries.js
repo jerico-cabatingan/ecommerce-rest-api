@@ -107,7 +107,7 @@ const getIds = (request, response, next) => {
     request.idArray = results.rows;
     next();
   })
-}
+};
 
 module.exports = {
   getProducts,
@@ -116,5 +116,4 @@ module.exports = {
   deleteProductById,
   updateProductById,
   getIds
-}
-
+};
