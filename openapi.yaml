@@ -138,8 +138,8 @@ paths:
       description: >-
         Users credentials will be extracted from the request body and checked
         against the database. If data matches then a session is started and user
-        is granted access to their protected resources. Else the an error is
-        sent and user is prompted to re-attempt.
+        is granted access to their protected resources. Else they will be
+        redirected to the root endpoint.
       operationId: post_login
       requestBody:
         description: Item Object
@@ -151,10 +151,12 @@ paths:
         '201':
           description: Created
           content:
-            application/json:
+            text/plain; charset=utf-8:
               examples:
                 Login Details:
-                  value: '{ "username": "string", "password": "string" }'
+                  value: |-
+                    request.session.passport: {}
+                    request.user: {}
       tags:
         - Authentication
   /logout:
@@ -165,7 +167,7 @@ paths:
     get:
       summary: User log-out
       description: >-
-        This will terminate the current session and redirect the user to the log
+        This will terminate the current session and redirect the user to the root endpoint
         in prompt
       operationId: get_logout
       responses:
@@ -175,7 +177,7 @@ paths:
             text/plain; charset=utf-8:
               examples:
                 Success message:
-                  value: User was logged out
+                  value: 'Welcome to my Node.js, Express, and Postgres API app. Please authenticate to proceed.'
       tags:
         - Authentication
   /users/register:
@@ -287,11 +289,11 @@ paths:
             text/plain; charset=utf-8:
               examples:
                 Updated user:
-                  value: >-
-                   User with ID: 100 was updated to:
-                    email: hundred@example.com
-                    username: hundred
-                    password: $2b$10$cZ7b5bSkDDgQpL3ftyIXZ.UtCDB8otOUqDfb1QRMw7THgXtSzkW..'
+                  value: |-
+                    User with ID: 100 was updated to:
+                     email: hundred@example.com
+                     username: hundred
+                     password: $2b$10$cZ7b5bSkDDgQpL3ftyIXZ.UtCDB8otOUqDfb1QRMw7THgXtSzkW..'
         '401':
           description: Unauthorized
           content:
@@ -661,6 +663,28 @@ paths:
       tags:
         - Orders
         - Required login
+  /profile:
+    summary: User profile
+    description: This endpoint serves request for a logged in user
+    get:
+      summary: Get user profile.
+      description: User will be redirected here on a successful login reuqest. Then their details are parsed from the request.session.passport object and displayed
+      operationId: get_profile
+      responses:
+        default:
+          description: Default error sample response
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Success message:
+                  value: |-
+                    You are logged in as 
+
+                    id: request.user
+
+                    username: request.session.passport.user.username
+      tags:
+        - Authentication
 components:
   schemas:
     User:

@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 const cors = require('cors');
 app.use(cors())
 
-// Configure sessions
+// Configuring Sessions
 const session = require('express-session');
 const store = new session.MemoryStore();
 
@@ -30,7 +30,7 @@ app.use(
   })
 );
 
-// Configure local log-in strategy
+// Configuring Passport.js local strategy
 const usersQuery = require('./db/users-queries');
 const auth = require('./routes/middleware')
 const passport = require('passport');
@@ -67,6 +67,8 @@ app.get('/', (request, response) => {
   response.send('Welcome to my Node.js, Express, and Postgres API app. Please authenticate to proceed.')
 }); 
 
+// AUTHENTICATION //
+
 app.post('/login', 
   passport.authenticate('local', 
   {failureRedirect: '/'}), (request, response) => {
@@ -100,6 +102,9 @@ app.use('/products', productsRouter)
 const usersRouter = require('./routes/users');
 app.use('/users', usersRouter);
 
+const cartsRouter = require('./routes/carts');
+app.use('/carts', cartsRouter);
+
 // SWAGGER CONFIG //
 const swaggerUi = require('swagger-ui-express');
 const yaml = require('js-yaml');
@@ -116,3 +121,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => { 
   console.log(`Server is listening on port: ${PORT}`)
 })
+
+// TO DO LIST
+// update swagger docs
+// finish orders cart and checkout endpoints
