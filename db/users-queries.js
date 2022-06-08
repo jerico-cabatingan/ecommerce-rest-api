@@ -17,8 +17,7 @@ const submitNewUser = async (request, response) => {
     [id, email, username, hashedPassword],
     (error, results) => {
       if (error) {
-        response.status(400).send('Username or email is already taken');
-        throw error
+        response.status(400).send(error.detail)
       }
       response.status(201).send(`New user: "${username}" created.`)
   })
@@ -28,7 +27,7 @@ const submitNewUser = async (request, response) => {
 const getUsers = (request, response) => {
   pool.query('SELECT * FROM users;', (error, results) => {
     if (error) {
-      throw error
+      response.status(400).send(error.detail)
     }
     response.status(200).send(results.rows);
   })
@@ -39,7 +38,7 @@ const getUserById = (request, response) => {
   const id = request.params.id
   pool.query('SELECT * FROM users WHERE id = $1;',[id], (error, results) => {
     if (error) {
-      throw error;
+      response.status(400).send(error.detail)
     } 
     else if (results.rows.length === 0 ) {
       response.status(404).send("User does not exist");
@@ -64,8 +63,7 @@ const updateUser = async (request, response) => {
 
   pool.query('UPDATE users SET email = $1, username = $2, password = $3 WHERE id = $4;', [username, email, hashedPassword, userId], (error) => {
     if (error) {
-      response.status(400).send('Invalid input')
-      throw error
+      response.status(400).send(error.detail)
     } 
     else if (userId) {
       response.status(200).send(`User with ID: ${userId} was updated to:
@@ -90,6 +88,7 @@ const getIds = (request, response, next) => {
   })
 };
 
+// used in configuring passport.js local strategy
 const authenticateUser = async (userData) => {
   const { username, password } = userData;
   try {

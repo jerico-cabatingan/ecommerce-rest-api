@@ -3,13 +3,13 @@ const cartsRouter = express.Router();
 const dbQuery = require('../db/carts-queries');
 const auth = require('./middleware');
 
-cartsRouter.post('/',auth.checkAuthenticated, );
+cartsRouter.post('/', auth.checkAuthenticated, dbQuery.createCart);
 
-cartsRouter.post('/:id', auth.checkAuthenticated, );
+cartsRouter.post('/:id', auth.checkAuthenticated ,dbQuery.addItemById);
 
-cartsRouter.delete('/:id', auth.checkAuthenticated, );
+cartsRouter.delete('/:id',dbQuery.getCartItemIds, dbQuery.deleteItemById);
 
-cartsRouter.get('/:id', auth.checkAuthenticated, );
+cartsRouter.get('/:id', auth.checkAuthenticated ,dbQuery.getCartById);
 
 cartsRouter.post('/:id/checkout', auth.checkAuthenticated, );
 

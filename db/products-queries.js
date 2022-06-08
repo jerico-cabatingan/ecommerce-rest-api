@@ -6,7 +6,7 @@ const pool = new Pool(config);
 const getProducts = (request, response) => {
   pool.query('SELECT * FROM items;', (error, results) => {
     if (error) {
-      throw error
+      response.status(400).send(error.detail)
     }
     response.status(200).json(results.rows);
   })
@@ -15,19 +15,18 @@ const getProducts = (request, response) => {
 // Operation stops server if theres an error
 const postProduct = (request, response) => {
   const { id, name, category, price } = request.body;
-  const newProduct = {id, name, category, price};
 
   pool.query('INSERT INTO items (id, name, category, price) VALUES ($1, $2, $3, $4);', [id, name, category, price], (error) => {
     if (error) {
-      response.status(400).send('Invalid input');
-      throw error;
+      response.status(400).send(error.detail)
     }
     else {
       response.status(201).send(`Your product was created: 
-      id: ${newProduct.id},
-      name: ${newProduct.name},
-      category: ${newProduct.category},
-      price: ${newProduct.price}`)
+        id: ${id},
+        name: ${name},
+        category: ${category},
+        price: ${price}`
+      )
     }
   })
 };
@@ -38,7 +37,7 @@ const getProductById = (request, response) => {
   
   pool.query('SELECT * FROM items WHERE id = $1;', [productId], (error, results) => {
     if (error) {
-      throw error;
+      response.status(400).send(error.detail)
     } 
     else if (results.rows.length === 0 ) {
       response.status(404).send("Item does not exist");
@@ -59,7 +58,7 @@ const deleteProductById = (request, response) => {
 
   pool.query('DELETE FROM items WHERE id = $1;', [productId], (error) => {
     if (error) {
-      throw error
+      response.status(400).send(error.detail)
     } 
     else if (productId) {
       response.status(200).send(`Item with ID: ${productId} was removed.`);

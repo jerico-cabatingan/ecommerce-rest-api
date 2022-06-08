@@ -116,10 +116,14 @@ paths:
         '201':
           description: Created
           content:
-            application/json:
+            text/plain; charset=utf-8:
               examples:
                 New Cart:
-                  value: '{ "cart_id": "string", "user_id": "string", "items": [] }'
+                  value: >-
+                    Cart created.
+                     id: eefd24b1-0f76-4375-a0b7-3645611166fe
+                     user_id: 229535de-1a96-463f-86c3-767f46e1ddc9
+                  
         '401':
           description: Unauthorized
           content:
@@ -127,6 +131,13 @@ paths:
               examples:
                 Error message:
                   value: Authorisation required.
+        '400':
+          description: Database Error
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: 'Error object details'
       tags:
         - Carts
         - Required login
@@ -177,7 +188,7 @@ paths:
             text/plain; charset=utf-8:
               examples:
                 Success message:
-                  value: 'Welcome to my Node.js, Express, and Postgres API app. Please authenticate to proceed.'
+                  value: User was logged out
       tags:
         - Authentication
   /users/register:
@@ -453,6 +464,13 @@ paths:
                   value: >-
                     { "cart_id": "string", "user_id": "string", "items": [{"id":
                     "string"}] }
+        '400':
+          description: Database Error
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: 'Error object details'
         '401':
           description: Unauthorized
           content:
@@ -477,13 +495,13 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        '200':
           description: No Content
           content:
             text/plain; charset=utf-8:
               examples:
                 Success message:
-                  value: Cart item removed.
+                  value: 'Item with ID: "id" is was removed from cart with id: "id"'
         '401':
           description: Unauthorized
           content:
@@ -497,7 +515,7 @@ paths:
             text/plain; charset=utf-8:
               examples:
                 Error message:
-                  value: Cart item not found
+                  value: 'Item with ID: "id" is not in cart with id: "id"'
       tags:
         - Carts
         - Required login
@@ -508,7 +526,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: The id of the order.
+          description: The id of the cart
           required: true
           schema:
             type: string
@@ -520,8 +538,31 @@ paths:
               examples:
                 Cart instance:
                   value: >-
-                    { "cart_id": "string", "user_id": "string", "items": [ {
-                    "id": "string" }, { "id": "string" } ] }
+                    [
+                        {
+                            "id": "100",
+                            "name": "Fake Hundred Dolla Bill",
+                            "category": "Toys",
+                            "price": "$100.00",
+                            "item_id": "100",
+                            "cart_id": "eefd24b1-0f76-4375-a0b7-3645611166fe"
+                        },
+                        {
+                            "id": "17",
+                            "name": "Alarm Clock",
+                            "category": "Household",
+                            "price": "$8.45",
+                            "item_id": "17",
+                            "cart_id": "eefd24b1-0f76-4375-a0b7-3645611166fe"
+                        }
+                    ]
+        '400':
+          description: Unauthorized
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: 'Error object details'
         '401':
           description: Unauthorized
           content:

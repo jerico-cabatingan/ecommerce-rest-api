@@ -90,6 +90,7 @@ app.get('/logout', (request, response) => {
     if (err) {
       return next(err); 
     }
+    console.log('Authenticated: ' + request.isAuthenticated())
     response.redirect('/');
   });
 });

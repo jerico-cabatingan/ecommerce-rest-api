@@ -9,6 +9,6 @@ usersRouter.get('/', dbQuery.getUsers);
 
 usersRouter.get('/:id', auth.checkAuthenticated, dbQuery.getUserById);
 
-usersRouter.put('/:id', auth.checkAuthenticated, dbQuery.getIds ,dbQuery.updateUser);
+usersRouter.put('/:id', auth.checkAuthenticated, dbQuery.getIds, dbQuery.updateUser);
 
 module.exports = usersRouter;
