@@ -5,12 +5,12 @@ const auth = require('./middleware');
 
 cartsRouter.post('/', auth.checkAuthenticated, dbQuery.createCart);
 
-cartsRouter.post('/:id', auth.checkAuthenticated ,dbQuery.addItemById);
+cartsRouter.post('/:id', auth.checkAuthenticated, dbQuery.addItemById);
 
 cartsRouter.delete('/:id',dbQuery.getCartItemIds, dbQuery.deleteItemById);
 
-cartsRouter.get('/:id', auth.checkAuthenticated ,dbQuery.getCartById);
+cartsRouter.get('/:id', auth.checkAuthenticated, dbQuery.getCartById);
 
-cartsRouter.post('/:id/checkout', auth.checkAuthenticated, );
+cartsRouter.post('/:id/checkout', auth.checkAuthenticated, dbQuery.getCartTotal, dbQuery.createNewOrder);
 
 module.exports = cartsRouter;

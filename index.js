@@ -78,9 +78,9 @@ app.post('/login',
   passport.authenticate('local', 
   {failureRedirect: '/'}), (request, response) => {
 
-    console.log(`\n\nrequest.session.passport: ${JSON.stringify(request.session.passport)}`)
+    console.log(`\nrequest.session.passport: ${JSON.stringify(request.session.passport)}`)
 
-    console.log(`request.user: ${JSON.stringify(request.user)}\n\n`)
+    console.log(`request.user: ${JSON.stringify(request.user)}\n`)
 
     response.redirect('/profile');
   }
