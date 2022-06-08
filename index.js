@@ -13,6 +13,8 @@ app.use(bodyParser.json());
 const cors = require('cors');
 app.use(cors())
 
+
+
 // Configuring Sessions
 const session = require('express-session');
 const store = new session.MemoryStore();
@@ -29,6 +31,8 @@ app.use(
     store
   })
 );
+
+
 
 // Configuring Passport.js local strategy
 const usersQuery = require('./db/users-queries');
@@ -63,9 +67,10 @@ passport.use(new LocalStrategy(async (username, password, done) => {
 }));
 
 
+
 app.get('/', (request, response) => {
   response.send('Welcome to my Node.js, Express, and Postgres API app. Please authenticate to proceed.')
-}); 
+});
 
 // AUTHENTICATION //
 
@@ -95,6 +100,8 @@ app.get('/logout', (request, response) => {
   });
 });
 
+
+
 // EXPRESS ROUTERS //
 
 const productsRouter = require('./routes/products');
@@ -106,6 +113,11 @@ app.use('/users', usersRouter);
 const cartsRouter = require('./routes/carts');
 app.use('/carts', cartsRouter);
 
+const ordersRouter = require('./routes/orders');
+app.use('/orders', ordersRouter);
+
+
+
 // SWAGGER CONFIG //
 const swaggerUi = require('swagger-ui-express');
 const yaml = require('js-yaml');
@@ -115,6 +127,8 @@ const swaggerDocument = yaml.load(fs.readFileSync(path.resolve(__dirname, './ope
 
 // Return Swagger UI documentation to /api-docs url
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+
 
 
 const PORT = process.env.PORT || 3000;
