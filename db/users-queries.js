@@ -50,7 +50,7 @@ const getUserById = (request, response) => {
 };
 
 const updateUser = async (request, response) => {
-  const { username, email, password } = request.body; 
+  const { email, username, password } = request.body; 
 
   const paramId = request.params.id;
   const result = request.idArray.filter(user => user.id === paramId);
@@ -61,7 +61,7 @@ const updateUser = async (request, response) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
-  pool.query('UPDATE users SET email = $1, username = $2, password = $3 WHERE id = $4;', [username, email, hashedPassword, userId], (error) => {
+  pool.query('UPDATE users SET email = $1, username = $2, password = $3 WHERE id = $4;', [email, username, hashedPassword, userId], (error) => {
     if (error) {
       response.status(400).send(error.detail)
     } 

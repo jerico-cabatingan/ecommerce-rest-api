@@ -33,6 +33,13 @@ paths:
                           "password": "$2b$10$a9SQALC3dZpE.NkzzDdeYejf4YqjRTVWE1kIGuteZP5J9c1uHUwhy"
                       }
                     ]
+        '400':
+          description: Database Error
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Error Details
       tags:
         - Users
   /products:
@@ -41,9 +48,8 @@ paths:
     get:
       summary: Get products
       description: >-
-        This operation will return products from the items table with varying
-        degrees of specificity depending on URL query filters. And empty query
-        string will return all products. Incorret data will throw an error.
+        This operation will return products from the items table. Results can be filtered by category and item name and will be ordered in ascending order by price. An empty query
+        string will return all products.
       operationId: get_products
       responses:
         '200':
@@ -56,17 +62,24 @@ paths:
                     [
                       {
                           "id": "1",
-                          "name": "Hammer",
+                          "name": "T-shirt",
                           "category": "Tools",
                           "price": "$15.99"
                       },
                       {
                           "id": "2",
-                          "name": "Banana",
+                          "name": "Hammer",
                           "category": "Food",
-                          "price": "$1.00"
+                          "price": "$19.00"
                       }
                     ]
+        '400':
+          description: Database Error
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Error details
       tags:
         - Products
     post:
@@ -95,12 +108,12 @@ paths:
                       category: Household
                       price: 18.49
         '400':
-          description: Bad Request
+          description: Database Error
           content:
             text/plain; charset=utf-8:
               examples:
                 Error Message:
-                  value: Invalid input
+                  value: Error details
       tags:
         - Products
   /carts:
@@ -119,11 +132,17 @@ paths:
             text/plain; charset=utf-8:
               examples:
                 New Cart:
-                  value: >-
+                  value: |-
                     Cart created.
                      id: eefd24b1-0f76-4375-a0b7-3645611166fe
                      user_id: 229535de-1a96-463f-86c3-767f46e1ddc9
-                  
+        '400':
+          description: Database Error
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Error object details
         '401':
           description: Unauthorized
           content:
@@ -131,16 +150,8 @@ paths:
               examples:
                 Error message:
                   value: Authorisation required.
-        '400':
-          description: Database Error
-          content:
-            text/plain; charset=utf-8:
-              examples:
-                Error message:
-                  value: 'Error object details'
       tags:
         - Carts
-        - Required login
   /login:
     summary: Requests to this path are related to authentication and authorisation.
     description: 'Path will handle requests for logging in users. '
@@ -149,8 +160,7 @@ paths:
       description: >-
         Users credentials will be extracted from the request body and checked
         against the database. If data matches then a session is started and user
-        is granted access to their protected resources. Else they will be
-        redirected to the root endpoint.
+        is granted access to their protected resources. Passport.js local strategy can deduce if either username or password is incorrect in the console and will redirect you to the homepage if so.
       operationId: post_login
       requestBody:
         description: Item Object
@@ -159,8 +169,8 @@ paths:
             schema:
               $ref: '#/components/schemas/Login_details'
       responses:
-        '201':
-          description: Created
+        '302':
+          description: Redirect to /profile
           content:
             text/plain; charset=utf-8:
               examples:
@@ -178,8 +188,8 @@ paths:
     get:
       summary: User log-out
       description: >-
-        This will terminate the current session and redirect the user to the root endpoint
-        in prompt
+        This will terminate the current session and redirect the user to the
+        home page.
       operationId: get_logout
       responses:
         '200':
@@ -188,7 +198,15 @@ paths:
             text/plain; charset=utf-8:
               examples:
                 Success message:
-                  value: User was logged out
+                  value: 'Authenticated: false'
+        '302':
+          description: Redirect to /profile
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Login Details:
+                  value: |-
+                      Welcome to my Node.js, Express, and Postgres API app. Please authenticate to proceed.
       tags:
         - Authentication
   /users/register:
@@ -223,7 +241,7 @@ paths:
             text/plain; charset=utf-8:
               examples:
                 Error Message:
-                  value: Username or email is already taken
+                  value: Error details
       tags:
         - Users
   /users/{id}:
@@ -256,6 +274,13 @@ paths:
                         "username": "onehundred@example.com",
                         "password": "$2b$10$WgPzO5g6UCFlmpnUxd8m1evthPIf4E.dw/pWy8cGscUyMbaAJaScu"
                     }
+        '400':
+          description: Database Error
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Error details
         '401':
           description: Unauthorized
           content:
@@ -272,7 +297,6 @@ paths:
                   value: User does not exist
       tags:
         - Users
-        - Required login
     put:
       summary: Update specific user
       description: >-
@@ -305,6 +329,13 @@ paths:
                      email: hundred@example.com
                      username: hundred
                      password: $2b$10$cZ7b5bSkDDgQpL3ftyIXZ.UtCDB8otOUqDfb1QRMw7THgXtSzkW..'
+        '400':
+          description: Database Error
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Error details
         '401':
           description: Unauthorized
           content:
@@ -321,7 +352,6 @@ paths:
                   value: User does not exist
       tags:
         - Users
-        - Required login
   /products/{id}:
     summary: Product data
     description: Requests will query a single product by id.
@@ -352,6 +382,13 @@ paths:
                       "category": "Household",
                       "price": "$18.49"
                     }
+        '400':
+          description: Database Error
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error Message:
+                  value: Error details
         '404':
           description: Not found
           content:
@@ -423,6 +460,13 @@ paths:
                       name: Fake Hundred Dollar Bill
                       category: Toys
                       price: 100
+        '400':
+          description: Database Error
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error Message:
+                  value: Error details
         '404':
           description: Not found
           content:
@@ -470,7 +514,7 @@ paths:
             text/plain; charset=utf-8:
               examples:
                 Error message:
-                  value: 'Error object details'
+                  value: Error object details
         '401':
           description: Unauthorized
           content:
@@ -480,7 +524,6 @@ paths:
                   value: Authorisation required.
       tags:
         - Carts
-        - Required login
     delete:
       summary: Delete cart item
       description: >-
@@ -494,6 +537,12 @@ paths:
           required: true
           schema:
             type: string
+      requestBody:
+        description: Item Object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cart_item'
       responses:
         '200':
           description: No Content
@@ -502,6 +551,13 @@ paths:
               examples:
                 Success message:
                   value: 'Item with ID: "id" is was removed from cart with id: "id"'
+        '400':
+          description: Database Error
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Error object details
         '401':
           description: Unauthorized
           content:
@@ -518,7 +574,6 @@ paths:
                   value: 'Item with ID: "id" is not in cart with id: "id"'
       tags:
         - Carts
-        - Required login
     get:
       summary: Retrieve a specific cart
       description: 'Retrieve a specific cart from the database using the id parameter. '
@@ -537,7 +592,7 @@ paths:
             application/json:
               examples:
                 Cart instance:
-                  value: >-
+                  value: |-
                     [
                         {
                             "id": "100",
@@ -557,12 +612,12 @@ paths:
                         }
                     ]
         '400':
-          description: Unauthorized
+          description: Database Error
           content:
             text/plain; charset=utf-8:
               examples:
                 Error message:
-                  value: 'Error object details'
+                  value: Error details
         '401':
           description: Unauthorized
           content:
@@ -579,7 +634,6 @@ paths:
                   value: Cart not found.
       tags:
         - Carts
-        - Required login
   /carts/{id}/checkout:
     summary: Create order
     description: >-
@@ -599,27 +653,21 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        description: User Object
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
       responses:
         '201':
           description: Created
           content:
-            application/json:
+            text/plain; charset=utf-8:
               examples:
                 New Order Object:
-                  value: |-
-                    {
-                      "id": "string",
-                      "user_id": "string",
-                      "cart_id": "string",
-                      "items": {},
-                      "total_price": 0
-                    }
+                  value: You have been charged a total of $32.93
+        '400':
+          description: Server error
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Error details.
         '401':
           description: Unauthorized
           content:
@@ -629,7 +677,6 @@ paths:
                   value: Authorisation required.
       tags:
         - Orders
-        - Required login
   /orders:
     summary: Order data
     description: Manipulate orders data
@@ -656,6 +703,13 @@ paths:
                         cart_id: string
                         items: {}
                         total_price: 0
+        '400':
+          description: Database Error
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Error Details
         '401':
           description: Unauthorized
           content:
@@ -665,7 +719,6 @@ paths:
                   value: Authorisation required.
       tags:
         - Orders
-        - Required login
   /orders/{id}:
     summary: Get an order
     description: Retrieve an order by id
@@ -694,6 +747,13 @@ paths:
                       "items": {},
                       "total_price": 0
                     }
+        '400':
+          description: Database Error
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Error Details
         '401':
           description: Unauthorized
           content:
@@ -701,18 +761,27 @@ paths:
               examples:
                 Error message:
                   value: Authorisation required.
+        '404':
+          description: Not Found
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: 'Order: ''id'' not found.'
       tags:
         - Orders
-        - Required login
   /profile:
     summary: User profile
     description: This endpoint serves request for a logged in user
     get:
       summary: Get user profile.
-      description: User will be redirected here on a successful login reuqest. Then their details are parsed from the request.session.passport object and displayed
+      description: >-
+        User will be redirected here on a successful login reuqest. Then their session
+        details are parsed from the request object and
+        displayed
       operationId: get_profile
       responses:
-        default:
+        '200':
           description: Default error sample response
           content:
             text/plain; charset=utf-8:
@@ -724,16 +793,42 @@ paths:
                     id: request.user
 
                     username: request.session.passport.user.username
+        '401':
+          description: Unauthorized
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Error message:
+                  value: Authorisation required.
       tags:
         - Authentication
+  /:
+    summary: Home
+    description: Default page for the app
+    get:
+      summary: Get home page
+      description: >-
+        This is the homepage of the app. Users will be redirected here if they
+        try to access protected resources when they are not signed in.
+      operationId: get_homepage
+      responses:
+        '200': 
+          description: Welcome message
+          content:
+            text/plain; charset=utf-8:
+              examples:
+                Success message:
+                  value: Welcome to my Node.js, Express, and Postgres API app. Please authenticate to proceed.
+      tags:
+        - Home
 components:
   schemas:
     User:
       type: object
       properties:
-        username:
-          type: string
         email:
+          type: string
+        username:
           type: string
         password:
           type: string
@@ -768,18 +863,3 @@ components:
           type: string
       xml:
         name: Login_details
-    Order:
-      type: object
-      properties:
-        id:
-          type: string
-        user_id:
-          type: string
-        cart_id:
-          type: string
-        items:
-          type: object
-        total_price:
-          type: number
-      xml:
-        name: Order

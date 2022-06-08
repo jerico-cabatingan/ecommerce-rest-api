@@ -79,7 +79,7 @@ const createNewOrder = (request, response) => {
 
   pool.query('INSERT INTO orders (id, user_id, cart_id, total_price) VALUES ($1, $2, $3, $4);', [id, userId, cartId, totalPrice], (error, results) => {
     if (error) {
-      console.log(error.detail);
+      response.status(200).send(error.detail);
     }
     response.status(201).send(`You have been charged a total of ${totalPrice}`);
   })
@@ -98,7 +98,7 @@ const getCartItemIds = (request, response, next) => {
   })
 };
 
-// This middleware supplys carts total price to /order/:id/checkout
+// This middleware supplys carts total price to POST /order/:id/checkout
 const getCartTotal = (request, response, next) => {
   const cartId = request.params.id;
 

@@ -4,15 +4,26 @@ const pool = new Pool(config);
 
 
 const getProducts = (request, response) => {
-  pool.query('SELECT * FROM items;', (error, results) => {
+  let category; 
+  request.query.category ? category = `%${request.query.category.toLowerCase()}%` : category = '%%';
+
+  let name; 
+  request.query.name ? name = `%${request.query.name.toLowerCase()}%` : name = '%%';
+
+  pool.query('SELECT * FROM items WHERE category LIKE $1 AND name LIKE $2 ORDER BY price ASC;', [category, name], (error, results) => {
     if (error) {
-      response.status(400).send(error.detail)
+      response.status(400).send(error)
     }
-    response.status(200).json(results.rows);
+    else if (results.rows.length === 0) {
+      response.send('No results match your search filter')
+    }
+    else if (results.rows.length > 0 ) {
+      response.status(200).json(results.rows);
+    }
   })
 };
 
-// Operation stops server if theres an error
+
 const postProduct = (request, response) => {
   const { id, name, category, price } = request.body;
 
@@ -81,7 +92,7 @@ const updateProductById = (request, response) => {
 
   pool.query('UPDATE items SET name = $1, category = $2, price = $3 WHERE id = $4;', [name, category, price, productId], (error) => {
     if (error) {
-      response.status(400).send('Invalid input')
+      response.status(400).send(error.detail)
       throw error
     } 
     else if (productId) {

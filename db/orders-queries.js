@@ -18,10 +18,11 @@ const getOrderById = (request, response) => {
     if (error) {
       response.status(400).send(error.detail)
     }
-    if (results.rows.length === 0) {
+    else if (results.rows.length === 0) {
       response.status(404).send(`Order: ${orderId} not found.`)
     }
-    response.status(200).json(results.rows);
+    else if (results.rows.length > 0)
+    response.status(200).json(results.rows[0]);
   })
 };
 
