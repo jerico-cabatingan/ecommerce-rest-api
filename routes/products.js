@@ -1,5 +1,5 @@
 const express = require('express');
-const dbQuery = require('../db/products-queries');
+const dbQuery = require('../controller/products-queries');
 const productsRouter = express.Router();
 
 productsRouter.get('/', dbQuery.getProducts);

@@ -1,7 +1,7 @@
 const express = require('express');
 const ordersRouter = express.Router();
-const dbQuery = require('../db/orders-queries');
-const auth = require('./middleware');
+const dbQuery = require('../controller/orders-queries');
+const auth = require('../utils/middleware');
 
 ordersRouter.get('/', auth.checkAuthenticated, dbQuery.getOrders);
 

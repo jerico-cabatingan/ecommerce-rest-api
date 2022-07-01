@@ -1,7 +1,7 @@
 const express = require('express');
 const usersRouter = express.Router();
-const dbQuery = require('../db/users-queries');
-const auth = require('./middleware');
+const dbQuery = require('../controller/users-queries');
+const auth = require('../utils/middleware');
 
 usersRouter.post('/register', dbQuery.submitNewUser);
 

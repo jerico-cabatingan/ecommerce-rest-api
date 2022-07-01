@@ -1,7 +1,7 @@
 const express = require('express');
 const cartsRouter = express.Router();
-const dbQuery = require('../db/carts-queries');
-const auth = require('./middleware');
+const dbQuery = require('../controller/carts-queries');
+const auth = require('../utils/middleware');
 
 cartsRouter.post('/', auth.checkAuthenticated, dbQuery.createCart);
 

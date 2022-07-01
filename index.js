@@ -35,8 +35,8 @@ app.use(
 
 
 // Configuring Passport.js local strategy
-const usersQuery = require('./db/users-queries');
-const auth = require('./routes/middleware')
+const usersQuery = require('./controller/users-queries');
+const auth = require('./utils/middleware')
 const passport = require('passport');
 const LocalStrategy = require("passport-local").Strategy;
 
@@ -75,11 +75,9 @@ app.get('/', (request, response) => {
 // AUTHENTICATION //
 
 app.post('/login', 
-  passport.authenticate('local', 
-  {failureRedirect: '/'}), (request, response) => {
-
+  passport.authenticate('local', {failureRedirect: '/'}), 
+  (request, response) => {
     console.log(`\nrequest.session.passport: \n${JSON.stringify(request.session.passport)}\n`)
-
     console.log(`request.user: \n${JSON.stringify(request.user)}\n`)
 
     response.redirect('/profile');
