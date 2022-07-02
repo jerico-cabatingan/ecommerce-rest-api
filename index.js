@@ -1,8 +1,5 @@
-// Create s an express server
 const express = require('express');
 const app = express();
-
-// Give server access to .env variables
 require('dotenv').config();
 
 // Allow json objects to be parsed from the request body
@@ -11,8 +8,7 @@ app.use(bodyParser.json());
 
 // Allow cross origin resource sharing
 const cors = require('cors');
-app.use(cors())
-
+app.use(cors());
 
 
 // Configuring Sessions
@@ -31,7 +27,6 @@ app.use(
     store
   })
 );
-
 
 
 // Configuring Passport.js local strategy
@@ -54,7 +49,7 @@ passport.deserializeUser((user, done) => {
 
 passport.use(new LocalStrategy(async (username, password, done) => {
   try {
-    // returns { id: 'id', username: 'example', password: 'hashedPw' }
+    // returns { id: 'id', email: 'example@email.com', password: 'hashedPw' }
     const user = await usersQuery.authenticateUser({ username, password })
     if (!user || !user.password) {
       return done(null, false);
@@ -75,12 +70,11 @@ app.get('/', (request, response) => {
 // AUTHENTICATION //
 
 app.post('/login', 
-  passport.authenticate('local', {failureRedirect: '/'}), 
+  passport.authenticate('local'), 
   (request, response) => {
-    console.log(`\nrequest.session.passport: \n${JSON.stringify(request.session.passport)}\n`)
-    console.log(`request.user: \n${JSON.stringify(request.user)}\n`)
-
-    response.redirect('/profile');
+    // console.log(`\nrequest.session.passport: \n${JSON.stringify(request.session.passport)}\n`)
+    console.log(request.isAuthenticated())
+    response.send(JSON.stringify(request.session.passport.user));
   }
 );
 

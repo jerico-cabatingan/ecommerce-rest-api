@@ -8,7 +8,8 @@ export const Profile = () => {
   return (
     <>
       <div>I am the Profile page</div>
-
+      <Cart/>
+      <Orders/>
     </>
   )
 }

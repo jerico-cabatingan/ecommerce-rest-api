@@ -1,46 +1,66 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { login } from '../../api/index';
+import { getLastCart } from '../../api/index'
 
 export const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [failedLogin, setFailedlogin] = useState(false);
 
-  useEffect(() => {
-    if(sessionStorage.getItem('email')) {
-      setEmail(sessionStorage.getItem('email'))
-    };
-    console.log(sessionStorage.getItem('email'))
-  }, [])
-
-  useEffect(() => {
-    sessionStorage.setItem('email', email)
-    console.log(sessionStorage.getItem('email'))
-  }, [email])
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // some asynchronous API request
+
+    const result = await login(username, password);
+    
+    if (!result) {
+      setFailedlogin(true);
+    } else {
+      sessionStorage.setItem('id', result.id);
+      sessionStorage.setItem('username', result.username);
+      setFailedlogin(false);
+      console.log(sessionStorage.getItem('id'));
+      console.log(sessionStorage.getItem('username'));
+    }
+  };
+
+  const handleClick = async () => {
+    const result = await getLastCart(sessionStorage.getItem('id'));
+
+    console.log(result);
+
+    if (!result) {
+      sessionStorage.setItem('cartId', null);
+    } else {
+      sessionStorage.setItem('cartId', result);
+    }
+
+    console.log(sessionStorage.getItem('userId'))
   };
 
   return (
     <section>
       <form onSubmit={handleSubmit}>
         <div className='field'>
-          <label>E-mail</label>
-          <input type="text" value={email} onChange={({target}) => setEmail(target.value)}/>
+          <label>Username</label>
+          <input type="text" value={username} onChange={({target}) => setUsername(target.value)}/>
         </div>
         <div className='field'>
           <label>Password</label>
           <input type="text" value={password} onChange={({target}) => setPassword(target.value)}/>
         </div>
+        { failedLogin === true && <h5>Incorrect Details</h5>}
         <div className='field'>
           <button type="submit">Log In!</button>
         </div>
       </form>
       <div>
-        <h3>Already have an account?</h3>
+        <h3>Don't have an account?</h3>
         <button>
           <Link to='/registration'>Register</Link>
+        </button>
+        <button onClick={handleClick}>
+          Add Cart to session storage
         </button>
       </div>
     </section>

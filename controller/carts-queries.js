@@ -3,12 +3,13 @@ const uuid = require('uuid').v4;
 
 
 const createCart = (request, response) => {
-  const userId = request.user;
   const cartId = uuid();
-
-  pool.query('INSERT INTO carts (id, user_id) VALUES ($1, $2);', [cartId, userId], (error) => {
+  const userId = request.session.passport.user.id;
+  const today = new Date().toUTCString();
+ 
+  pool.query('INSERT INTO carts (id, user_id, timestamp) VALUES ($1, $2, $3);', [cartId, userId, today], (error) => {
     if (error) {
-      response.status(400).send(error.detail)
+      response.status(400).send(error)
     }
     else {
       response.status(201).send(`Cart created. \nid: ${cartId} \nuser_id: ${userId}`)
@@ -20,9 +21,9 @@ const addItemById = (request, response) => {
   const itemId = request.body.id
   const cartId = request.params.id
 
-  pool.query('INSERT INTO cart_items (item_id, cart_id) VALUES ($1, $2);',[itemId, cartId] ,(error, results) => {
+  pool.query('INSERT INTO cart_items (item_id, cart_id) VALUES ($1, $2);', [itemId, cartId],(error, results) => {
     if (error) {
-      response.status(400).send(error.detail)
+      response.status(400).send(error)
     }
     else {
       response.status(201).send(`Item with id: ${itemId} \nwas added to cart with id: ${cartId}`)
@@ -70,13 +71,13 @@ const getCartById = (request, response) => {
 
 const createNewOrder = (request, response) => {
   const id = uuid();
-  const userId = request.user;
+  const userId = request.session.passport.user.id;
   const cartId = request.params.id;
   const totalPrice = request.cartTotal;
 
   pool.query('INSERT INTO orders (id, user_id, cart_id, total_price) VALUES ($1, $2, $3, $4);', [id, userId, cartId, totalPrice], (error, results) => {
     if (error) {
-      response.status(200).send(error.detail);
+      response.status(200).send(error);
     }
     response.status(201).send(`You have been charged a total of ${totalPrice}`);
   })
@@ -88,7 +89,7 @@ const getCartItemIds = (request, response, next) => {
 
   pool.query('SELECT item_id FROM cart_items WHERE cart_id = $1', [cartId], (error, results) => {
     if (error) {
-      console.log(error.detail);
+      console.log(error);
     }
     request.cartItemIds = results.rows;
     next();
@@ -101,19 +102,49 @@ const getCartTotal = (request, response, next) => {
 
   pool.query('SELECT SUM(price) FROM items JOIN cart_items ON items.id = cart_items.item_id WHERE cart_items.cart_id = $1;', [cartId], (error, results) => {
     if (error) {
-      console.log(error.detail);
+      console.log(error);
     }
     request.cartTotal = results.rows[0].sum;
     next();
   })
 };
 
+// This middleware updated the carts checkout status to true after an order has been placed
+const setCartCheckout = (request, response, next) => {
+  const cartId = request.params.id;
+
+  pool.query('UPDATE carts SET is_checked_out = true WHERE id = $1;', [cartId], (error, results) => {
+    if (error) {
+      console.log(error);
+    }
+    next();
+  })
+};
+
+// This middleware retrieved a users most recent cart for stoarge in session memory on the front end
+const getLastActiveCart = (request, response, next) => {
+  const userId = request.params.userId;
+  console.log(request.isAuthenticated());
+
+  pool.query('SELECT * FROM carts WHERE user_id = $1 AND is_checked_out = false ORDER BY timestamp DESC LIMIT 1;', [userId], (error, results) => {
+    if (error) {
+      response.send(error)
+      console.log(error)
+    } else if (results.length === 0) {
+      response.status(404).send('No active carts')
+    }
+    response.status(200).send(results.rows[0].id)
+  });
+}
+
 module.exports = {
   createCart,
   addItemById,
   deleteItemById,
   getCartById,
+  setCartCheckout,
   createNewOrder,
+  getLastActiveCart,
   getCartItemIds,
   getCartTotal
 }
