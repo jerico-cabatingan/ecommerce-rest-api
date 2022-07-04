@@ -75,3 +75,12 @@ passport.use(new LocalStrategy(async (username, password, done) => {
     return done(err);
   }
 }));
+
+passport.serializeUser((user, done) => {
+  console.log(`Serialising user: ${JSON.stringify(user)}`)
+  done(null, user)
+});
+passport.deserializeUser((user, done) => {
+  console.log(`Deserialising user: ${JSON.stringify(user.id)}`)
+  done(null, user.id);
+});

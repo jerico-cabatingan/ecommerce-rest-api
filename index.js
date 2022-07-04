@@ -34,14 +34,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.serializeUser((user, done) => {
-  console.log(`Serialising user: ${JSON.stringify(user)}`)
-  done(null, user)
-});
-passport.deserializeUser((user, done) => {
-  console.log(`Deserialising user: ${JSON.stringify(user.id)}`)
-  done(null, user.id);
-});
 
 app.get('/', (request, response) => {
   response.send('Welcome to my Node.js, Express, and Postgres API app. Please authenticate to proceed.')
