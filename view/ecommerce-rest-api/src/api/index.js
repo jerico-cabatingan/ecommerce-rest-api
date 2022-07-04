@@ -1,13 +1,34 @@
-// POST /users/register
-export const registerNewUser = async () => {
+const root = 'http://localhost:3001';
 
+// POST /users/register
+export const registerNewUser = async (fname, lname, email, username, password) => {
+  try {
+    const response = await fetch(`${root}/users/register`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ fname, lname, email, username, password })
+    });
+    // console.log(response);
+
+    if (response.ok) {
+      const json = await response.json();
+      // console.log(json)
+      return json;
+    }
+  }
+  catch (error) {
+    console.log(error);
+  }
 };
 
 // POST /login 
 // Returns user data to be stored in session storage
 export const login = async (username, password) => {
   try {
-    const response = await fetch(`/login`, {
+    const response = await fetch(`${root}/auth/login`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -18,8 +39,10 @@ export const login = async (username, password) => {
         password,
       })
     });
+    // console.log(response);
     if (response.ok) {
       const json = await response.json();
+      // console.log(json)
       return json;
     }
     throw new Error('Incorrect Details')
@@ -34,7 +57,7 @@ export const login = async (username, password) => {
 
 export const getLastCart = async (userId) => {
   try {
-    const response = await fetch(`/carts/session/${userId}`);
+    const response = await fetch(`${root}/carts/session/${userId}`);
     console.log(response)
 
     if (response.ok) {

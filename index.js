@@ -1,100 +1,30 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
-require('dotenv').config();
 
-// Allow json objects to be parsed from the request body
-const bodyParser = require("body-parser"); 
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+const cookieParser = require('cookie-parser')
+app.use(cookieParser());
 
 // Allow cross origin resource sharing
 const cors = require('cors');
-app.use(cors());
-
-
-// Configuring Sessions
-const session = require('express-session');
-const store = new session.MemoryStore();
-
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    cookie: { 
-      maxAge: 1000 * 60 *60 * 24, 
-      sameSite: "none" 
-    },
-    resave: false,
-    saveUninitialized: false,
-    store
-  })
-);
-
-
-// Configuring Passport.js local strategy
-const usersQuery = require('./controller/users-queries');
-const auth = require('./utils/middleware')
-const passport = require('passport');
-const LocalStrategy = require("passport-local").Strategy;
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-passport.serializeUser((user, done) => {
-  console.log('Serialising...')
-  done(null, user)
-});
-passport.deserializeUser((user, done) => {
-  console.log('Deserialising...')
-  done(null, user.id);
-});
-
-passport.use(new LocalStrategy(async (username, password, done) => {
-  try {
-    // returns { id: 'id', email: 'example@email.com', password: 'hashedPw' }
-    const user = await usersQuery.authenticateUser({ username, password })
-    if (!user || !user.password) {
-      return done(null, false);
-    }
-    return done(null, user);
-  } 
-  catch (err) {
-    return done(err);
-  }
+app.use(cors({
+  origin: "http://localhost:3000",
+  method: ['GET', 'POST'],
+  credentials: true
 }));
-
 
 
 app.get('/', (request, response) => {
   response.send('Welcome to my Node.js, Express, and Postgres API app. Please authenticate to proceed.')
 });
 
-// AUTHENTICATION //
-
-app.post('/login', 
-  passport.authenticate('local'), 
-  (request, response) => {
-    // console.log(`\nrequest.session.passport: \n${JSON.stringify(request.session.passport)}\n`)
-    console.log(request.isAuthenticated())
-    response.send(JSON.stringify(request.session.passport.user));
-  }
-);
-
-app.get('/profile', auth.checkAuthenticated, (request, response) => {
-  response.send(`You are logged in as \n\n id: ${request.user} \n username: ${request.session.passport.user.username}`);
-}); 
-
-app.get('/logout', (request, response) => {
-  request.logout((err) => {
-    if (err) {
-      return next(err); 
-    }
-    console.log('Authenticated: ' + request.isAuthenticated())
-    response.redirect('/');
-  });
-});
-
-
-
 // EXPRESS ROUTERS //
+
+const authRouter = require('./routes/auth');
+app.use('/auth', authRouter);
 
 const productsRouter = require('./routes/products');
 app.use('/products', productsRouter)
@@ -115,6 +45,8 @@ const swaggerUi = require('swagger-ui-express');
 const yaml = require('js-yaml');
 const fs = require('fs');
 const path = require('path');
+const { urlencoded } = require('body-parser');
+const { resourceLimits } = require('worker_threads');
 const swaggerDocument = yaml.load(fs.readFileSync(path.resolve(__dirname, './openapi.yaml'), 'utf8'));
 
 // Return Swagger UI documentation to /api-docs url

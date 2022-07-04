@@ -4,20 +4,21 @@ const bcrypt = require("bcrypt");
 
 
 const submitNewUser = async (request, response) => {
-  const { email, username, password } = request.body;
+  const { fname, lname, email, username, password } = request.body;
   const id = uuid();
 
   // Generate salt and hash the password 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
     
-  pool.query('INSERT INTO users (id, email, username, password) VALUES ($1, $2, $3, $4);', 
-    [id, email, username, hashedPassword],
+  pool.query('INSERT INTO users (id, first_name, last_name, email, username, password) VALUES ($1, $2, $3, $4, $5, $6);', 
+    [id, fname, lname, email, username, hashedPassword],
     (error, results) => {
       if (error) {
-        response.status(400).send(error.detail)
-      }
-      response.status(201).send(`New user: "${username}" created.`)
+        response.send(error);
+      } else {
+        response.status(201).send({ id, username });
+      };
   })
 };
 
@@ -25,7 +26,7 @@ const submitNewUser = async (request, response) => {
 const getUsers = (request, response) => {
   pool.query('SELECT * FROM users;', (error, results) => {
     if (error) {
-      response.status(400).send(error.detail)
+      response.send(error.detail)
     }
     response.status(200).send(results.rows);
   })
@@ -86,33 +87,10 @@ const getIds = (request, response, next) => {
   })
 };
 
-// used in configuring passport.js local strategy
-const authenticateUser = async (userData) => {
-  const { username, password } = userData;
-  try {
-    const result = await pool.query('SELECT id, username, password FROM users WHERE username = $1', [username]);
-
-    const { id, username: user, password: hashedPassword } = result.rows[0];
-
-    const matchedPassword = await bcrypt.compare(password, hashedPassword);
-
-    if (!matchedPassword) {
-      console.log('Your password was incorrect');
-      return {id, username: user, password: matchedPassword};
-    }
-    return {id, username: user, password: hashedPassword}
-  }
-  catch (err) {
-    console.log('Username does not exist!');
-    return err;
-  }
-}
-
 module.exports = {
   submitNewUser,
   getUsers,
   getUserById,
   updateUser,
   getIds,
-  authenticateUser,
 };
