@@ -1,27 +1,7 @@
 const express = require('express');
 const authRouter = express.Router();
-
-// Configuring Sessions
-const session = require('express-session');
-const store = new session.MemoryStore();
-
-authRouter.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    cookie: { 
-      maxAge: 1000 * 60 * 60 * 24, 
-      sameSite: "none" 
-    },
-    resave: false,
-    saveUninitialized: false,
-    store
-  })
-);
-
-require('../utils/passport-strategies');
 const passport = require('passport');
-authRouter.use(passport.initialize());
-authRouter.use(passport.session());
+require('../utils/passport-strategies');
 
 authRouter.post('/login', 
   passport.authenticate('local'), 

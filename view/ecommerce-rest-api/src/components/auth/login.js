@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../../api/index';
-import { getLastCart } from '../../api/index'
+// import { getLastCart } from '../../api/index';
+import styles from './auth.module.css';
 
 export const Login = () => {
   const [username, setUsername] = useState('');
@@ -19,51 +20,55 @@ export const Login = () => {
       setFailedlogin(false)
       sessionStorage.setItem('id', result.id);
       sessionStorage.setItem('username', result.username);
-      sessionStorage.setItem('isLoggedIn', true);
       navigate('/products')
   };
 
-  const handleClick = async () => {
-    const result = await getLastCart(sessionStorage.getItem('id'));
-    // console.log(result);
-    !result ? sessionStorage.setItem('cartId', null) : sessionStorage.setItem('cartId', result)
-    // console.log(sessionStorage.getItem('userId'))
-  };
-
   return (
-    <section>
+    <section className={styles.section}>
       <form onSubmit={handleSubmit}>
-        <div className='field'>
-          <label>Username</label>
-          <input type="text" value={username} onChange={({target}) => setUsername(target.value)}/>
+        <div className={styles.field}>
+          <label className={styles.label}>Username</label>
+          <input className={styles.input} 
+            type="text" 
+            value={username} 
+            onChange={({target}) => setUsername(target.value)}
+          />
         </div>
-        <div className='field'>
-          <label>Password</label>
-          <input type="text" value={password} onChange={({target}) => setPassword(target.value)}/>
+
+        <div className={styles.field}>
+          <label className={styles.label}>Password</label>
+          <input className={styles.input} 
+            type="text" 
+            value={password} 
+            onChange={({target}) => setPassword(target.value)}
+          />
         </div>
-        { failedLogin === true && <h5>Incorrect Details</h5>}
-        <div className='field'>
-          <button type="submit">Log In!</button>
+
+        { failedLogin === true && <h5 className={styles.h5}>Incorrect Details</h5>}
+
+        <div className={styles.field}>
+          <button className={styles.authButton} type="submit">Log In!</button>
         </div>
       </form>
-      <div>
-        <ul>
-          <li>
-            <a href='http://localhost:3001/auth/google'>Log in with google</a>
-          </li>
-          <li>
-            <a href='http://localhost:3001/auth/facebook'>Log in with facebook</a>
-          </li>
-        </ul>
+
+      <div className={styles.field}>
+        <h6 className={styles.h6}>or log in with</h6>
+        <a href='http://localhost:3001/auth/google'>
+          <button className={styles.authButton}>Google</button>
+        </a>
+        
+        <a href='http://localhost:3001/auth/facebook'>
+          <button className={styles.authButton}>Facebook</button>
+        </a>
       </div>
-      <div>
-        <h3>Don't have an account?</h3>
-        <button>
-          <Link to='/registration'>Register</Link>
-        </button>
-        <button onClick={handleClick}>
-          Add Cart to session storage
-        </button>
+
+      <div className={styles.field}>
+        <h6>Don't have an account?</h6>
+        <Link to='/registration'>
+          <button className={styles.authButton}>
+            Register
+          </button>
+        </Link>
       </div>
     </section>
   )

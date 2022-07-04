@@ -1,0 +1,58 @@
+/* * {
+  border: solid 1px black;
+
+} */
+
+.homeContainer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  right: 10%;
+  top: 25%;
+  padding: 30px;
+  height: 30vh;
+  width: 60vw;
+  max-width: 600px;
+  border: 1px solid black;
+  border-radius: 30px;
+}
+
+.title{
+  height: 80px;
+  font-size: 20px;
+  align-self: center;
+}
+
+.top {
+  padding: 20px;
+}
+
+.bottom {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+a {
+  text-decoration: none;
+}
+
+.home_button {
+  display: block;
+  margin: 0 auto;
+  height: 90px;
+  width: 80%;
+  min-width: 200px;
+  font-size: 30px;
+  text-decoration: none;
+}
+
+.lower_button {
+  min-width: 90px;
+  max-width: 150px;
+  margin: 10px;
+  text-align: center;
+  line-height: 40px;
+  font-size: 15px;
+}

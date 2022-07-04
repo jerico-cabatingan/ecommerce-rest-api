@@ -1,13 +1,11 @@
 const pool = require('../model/config');
-const uuid = require('uuid').v4;
 const bcrypt = require("bcrypt");
-
+const uuid = require('uuid').v4;
 
 const submitNewUser = async (request, response) => {
   const { fname, lname, email, username, password } = request.body;
   const id = uuid();
 
-  // Generate salt and hash the password 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
     

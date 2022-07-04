@@ -9,7 +9,7 @@ import { Route, Routes } from 'react-router-dom';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App" style={{width: '100vw', height: '100vh'}}>
       <Search/>
       <Routes>
         <Route path="" element={ <Home/> }/>

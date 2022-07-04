@@ -1,6 +1,7 @@
 const pool = require('../model/config');
 const bcrypt = require("bcrypt");
 
+// Protects resources which require authentication 
 const checkAuthenticated = (request, response, next) => {
   if (request.isAuthenticated()) {
     next();
@@ -11,6 +12,7 @@ const checkAuthenticated = (request, response, next) => {
   }
 };
 
+// Checks if OAuth2.0 SSO user is already registered
 const isUserRegistered = async (id) => {
   const result = await pool.query('SELECT id, username FROM users WHERE id = $1', [id]);
   
@@ -20,7 +22,7 @@ const isUserRegistered = async (id) => {
   return result.rows[0];
 };
 
-// used in configuring passport.js google strategy
+// Registers via passport.js OAuth2.0 SSO
 const registerOauthUser = async (user) => {
   const { id, fname, lname, email, username } = user
     
@@ -31,7 +33,7 @@ const registerOauthUser = async (user) => {
   }
 };
 
-// used in configuring passport.js local strategy
+// Configures passport.js local strategy
 const authenticateUser = async (userData) => {
   const { username, password } = userData;
   try {

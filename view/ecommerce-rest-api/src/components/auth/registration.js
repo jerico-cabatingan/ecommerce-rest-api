@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { registerNewUser, login } from '../../api/index';
 import { Link, useNavigate } from 'react-router-dom';
+import styles from './auth.module.css';
 
 export const Registration = () => {
   const [fname, setFname] = useState('');
@@ -14,10 +15,7 @@ export const Registration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const result = await registerNewUser(fname, lname, email, username, password);
-
-    console.log(result)
 
     if (result.detail) {
       setError(result.detail);
@@ -35,54 +33,83 @@ export const Registration = () => {
         sessionStorage.setItem('id', credentials.id);
         sessionStorage.setItem('username', credentials.username);
         sessionStorage.setItem('isLoggedIn', true);
-        navigate('/products')
+        navigate('/products');
     }
   };
 
 
   return (
-    <section>
+    <section className={styles.section}>
       <form onSubmit={handleSubmit}>
-        <div className='field'>
-          <label>First Name</label>
-          <input type="text" value={fname} onChange={({target}) => setFname(target.value)}/>
+        <div className={styles.field}>
+          <label className={styles.label}>First Name</label>
+          <input className={styles.input} 
+            type="text" 
+            value={fname} 
+            onChange={({target}) => setFname(target.value)}
+          />
         </div>
-        <div className='field'>
-          <label>Last Name</label>
-          <input type="text" value={lname} onChange={({target}) => setLname(target.value)}/>
+
+        <div className={styles.field}>
+          <label className={styles.label}>Last Name</label>
+          <input className={styles.input} 
+            type="text" 
+            value={lname} 
+            onChange={({target}) => setLname(target.value)}
+          />
         </div>
-        <div className='field'>
-          <label>E-mail</label>
-          <input type="text" value={email} onChange={({target}) => setEmail(target.value)}/>
+
+        <div className={styles.field}>
+          <label className={styles.label}>E-mail</label>
+          <input className={styles.input} 
+            type="text" 
+            value={email} 
+            onChange={({target}) => setEmail(target.value)}
+          />
         </div>
-        <div className='field'>
-          <label>Username</label>
-          <input type="text" value={username} onChange={({target}) => setUsername(target.value)}/>
+
+        <div className={styles.field}>
+          <label className={styles.label}>Username</label>
+          <input className={styles.input} 
+            type="text" 
+            value={username} 
+            onChange={({target}) => setUsername(target.value)}
+          />
         </div>
-        <div className='field'>
-          <label>Password</label>
-          <input type="text" value={password} onChange={({target}) => setPassword(target.value)}/>
+
+        <div className={styles.field}>
+          <label className={styles.label}>Password</label>
+          <input className={styles.input} 
+            type="text" 
+            value={password} 
+            onChange={({target}) => setPassword(target.value)}
+          />
         </div>
-        <div className='field'>
-          <button type="submit">Register!</button>
+
+        <div className={styles.field}>
+          <button className={styles.authButton} type="submit">Register!</button>
         </div>
-        { error && <h5>{error}</h5> }
+
+        { error && <h5 className={styles.h5}>{error}</h5> }
       </form>
-      <div>
-        <ul>
-          <li>
-            <a href='http://localhost:3001/auth/google'>Register with google</a>
-          </li>
-          <li>
-            <a href='http://localhost:3001/auth/facebook'>Register with facebook</a>
-          </li>
-        </ul>
+
+      <div className={styles.field}>
+         <h6 className={styles.h6}>or register with</h6>
+        <a href='http://localhost:3001/auth/google'>
+          <button className={styles.authButton}>Google</button>
+        </a>
+        <a href='http://localhost:3001/auth/facebook'>
+          <button className={styles.authButton}>Facebook</button>
+        </a>
       </div>
-      <div>
-        <h3>Already have an account?</h3>
-        <button>
-          <Link to='/login'>Log-In</Link>
-        </button>
+
+      <div className={styles.field}>
+        <h6 className={styles.h6}>Already have an account?</h6>
+        <Link to='/login'>
+          <button className={styles.authButton}>
+            Log in
+          </button>
+        </Link>
       </div>
     </section>
   )

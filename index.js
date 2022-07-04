@@ -1,21 +1,47 @@
 require('dotenv').config();
 const express = require('express');
+const session = require('express-session');
+const cookieParser = require('cookie-parser')
+const cors = require('cors');
 const app = express();
+const passport = require('passport');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-const cookieParser = require('cookie-parser')
 app.use(cookieParser());
 
 // Allow cross origin resource sharing
-const cors = require('cors');
 app.use(cors({
   origin: "http://localhost:3000",
   method: ['GET', 'POST'],
   credentials: true
 }));
 
+const store = new session.MemoryStore();
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    cookie: { 
+      maxAge: 1000 * 60 * 60 * 24, 
+      sameSite: "none" 
+    },
+    resave: false,
+    saveUninitialized: false,
+    store
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  console.log(`Serialising user: ${JSON.stringify(user)}`)
+  done(null, user)
+});
+passport.deserializeUser((user, done) => {
+  console.log(`Deserialising user: ${JSON.stringify(user.id)}`)
+  done(null, user.id);
+});
 
 app.get('/', (request, response) => {
   response.send('Welcome to my Node.js, Express, and Postgres API app. Please authenticate to proceed.')
@@ -52,11 +78,7 @@ const swaggerDocument = yaml.load(fs.readFileSync(path.resolve(__dirname, './ope
 // Return Swagger UI documentation to /api-docs url
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-
-
-
 const PORT = process.env.PORT || 3001;
-
 app.listen(PORT, () => { 
   console.log(`Server is listening on port: ${PORT}`)
 })

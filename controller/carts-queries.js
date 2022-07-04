@@ -121,7 +121,7 @@ const setCartCheckout = (request, response, next) => {
   })
 };
 
-// This middleware retrieved a users most recent cart for stoarge in session memory on the front end
+// This retrieves a users most recent cart for stoarge in session memory on the front end
 const getLastActiveCart = (request, response, next) => {
   const userId = request.params.userId;
   console.log(request.isAuthenticated());
