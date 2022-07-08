@@ -131,7 +131,7 @@ const getLastActiveCart = (request, response, next) => {
       response.send(error)
       console.log(error)
     } else if (results.length === 0) {
-      response.status(404).send('No active carts')
+      response.send({})
     }
     response.status(200).send(results.rows[0].id)
   });

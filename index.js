@@ -12,9 +12,9 @@ app.use(cookieParser());
 
 // Allow cross origin resource sharing
 app.use(cors({
-  origin: "http://localhost:3000",
-  method: ['GET', 'POST'],
-  credentials: true
+  origin: '*',
+  method: ['GET', 'POST', 'OPTIONS', 'DELETE', 'PUT'],
+  credentials: true,
 }));
 
 const store = new session.MemoryStore();
@@ -26,14 +26,13 @@ app.use(
       sameSite: "none" 
     },
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     store
   })
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
-
 
 app.get('/', (request, response) => {
   response.send('Welcome to my Node.js, Express, and Postgres API app. Please authenticate to proceed.')
@@ -63,8 +62,6 @@ const swaggerUi = require('swagger-ui-express');
 const yaml = require('js-yaml');
 const fs = require('fs');
 const path = require('path');
-const { urlencoded } = require('body-parser');
-const { resourceLimits } = require('worker_threads');
 const swaggerDocument = yaml.load(fs.readFileSync(path.resolve(__dirname, './openapi.yaml'), 'utf8'));
 
 // Return Swagger UI documentation to /api-docs url

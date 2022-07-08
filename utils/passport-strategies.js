@@ -66,7 +66,7 @@ passport.use(new LocalStrategy(async (username, password, done) => {
   try {
     // returns { id: 'id', email: 'example@email.com', password: 'hashedPw' }
     const user = await auth.authenticateUser({ username, password })
-    if (!user || !user.password) {
+    if (!user || !user.passwordMatched) {
       return done(null, false);
     }
     return done(null, user);
@@ -78,9 +78,11 @@ passport.use(new LocalStrategy(async (username, password, done) => {
 
 passport.serializeUser((user, done) => {
   console.log(`Serialising user: ${JSON.stringify(user)}`)
-  done(null, user)
+  done(null, user.id)
 });
-passport.deserializeUser((user, done) => {
-  console.log(`Deserialising user: ${JSON.stringify(user.id)}`)
-  done(null, user.id);
+
+passport.deserializeUser(async (id, done) => {
+  console.log(`Deserialising user.id: ${id}`);
+  const user = await auth.fetchUser(id); 
+  done(null, user);
 });

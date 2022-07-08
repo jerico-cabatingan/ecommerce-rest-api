@@ -1,0 +1,18 @@
+header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: rgb(224, 224, 224);
+  padding: 10px;
+  height: 2.5vh;
+  box-shadow: 2px 0px 10px 2px grey
+}
+
+.navigate > * {
+  height: 100%;
+}
+
+.navigate > button {
+  padding: 0px 8px;
+  height: 100%;
+}

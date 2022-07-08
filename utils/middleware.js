@@ -3,10 +3,10 @@ const bcrypt = require("bcrypt");
 
 // Protects resources which require authentication 
 const checkAuthenticated = (request, response, next) => {
-  if (request.isAuthenticated()) {
+  if (request.user) {
     next();
   }
-  if (!request.isAuthenticated()) {
+  if (!request.user) {
     console.log('Authorisation required')
     response.redirect(401, '/');
   }
@@ -37,17 +37,31 @@ const registerOauthUser = async (user) => {
 const authenticateUser = async (userData) => {
   const { username, password } = userData;
   try {
-    const result = await pool.query('SELECT id, username, password FROM users WHERE username = $1', [username]);
+    const result = await pool.query('SELECT * FROM users WHERE username = $1', [username]);
 
-    const { id, username: user, password: hashedPassword } = result.rows[0];
+    const { 
+      id, 
+      email, 
+      username: user, 
+      password: hashedPassword, 
+      lname: last_name, 
+      fname: first_name 
+    } = result.rows[0];
 
     const matchedPassword = await bcrypt.compare(password, hashedPassword);
-
     if (!matchedPassword) {
       console.log('Your password was incorrect');
       return {id, username: user, password: matchedPassword};
     }
-    return {id, username: user, password: hashedPassword}
+
+    return {
+      id, 
+      fname: first_name, 
+      lname: last_name, 
+      email, 
+      username: user,
+      passwordMatched: matchedPassword
+    };
   }
   catch (err) {
     console.log('Username does not exist!');
@@ -55,10 +69,22 @@ const authenticateUser = async (userData) => {
   }
 }
 
+// fetches user for passport.deserialize()
+const fetchUser = async (userId) => {
+  try {
+    const result = await pool.query('SELECT id, email, username FROM users WHERE id = $1;',[userId]);
+    const { id, email, username } = result.rows[0];
+    return {id, email, username };
+  }
+  catch (err) {
+    console.log(err)
+  }
+};
 
 module.exports = {
   checkAuthenticated,
   registerOauthUser,
   isUserRegistered,
-  authenticateUser
+  authenticateUser,
+  fetchUser
 };

@@ -36,10 +36,10 @@ export const login = async (username, password) => {
         password,
       })
     });
-    // console.log(response);
+    console.log(response);
     if (response.ok) {
       const json = await response.json();
-      // console.log(json)
+      console.log(json)
       return json;
     }
     throw new Error('Incorrect Details')
@@ -67,7 +67,10 @@ export const logout = async (username, password) => {
 // Returns cart with most recent timestamp and is_checked_out === false for a given userId
 export const getLastCart = async (userId) => {
   try {
-    const response = await fetch(`${root}/carts/session/${userId}`);
+  const response = await fetch(`${root}/carts/session/${userId}`, { 
+    credentials: "include", 
+    headers: {'Access-Control-Allow-Origin': 'http://localhost:3000/'} 
+  });
     console.log(response)
 
     if (response.ok) {
@@ -78,5 +81,23 @@ export const getLastCart = async (userId) => {
   }
   catch (error) {
     console.log(error);
+  }
+};
+
+export const getUser = async () => {
+  try {
+    const response = await fetch(`${root}/users/active`, { 
+      credentials: "include", 
+      headers: {'Access-Control-Allow-Origin': 'http://localhost:3000/'}
+    });
+    console.log(response)
+    if (response.ok) {
+      const json = await response.json();
+      console.log(json)
+    };
+    throw Error ('Unable to get User.')
+  }
+  catch (error) {
+    console.log(error)
   }
 };
