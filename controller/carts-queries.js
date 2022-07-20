@@ -133,7 +133,7 @@ const getLastActiveCart = (request, response, next) => {
     } else if (results.length === 0) {
       response.send({})
     }
-    response.status(200).send(results.rows[0].id)
+    response.status(200).send(results.rows[0])
   });
 }
 

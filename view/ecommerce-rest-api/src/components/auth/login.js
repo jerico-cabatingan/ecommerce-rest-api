@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../../api/index';
-// import { getLastCart } from '../../api/index';
-import styles from './auth.module.css';
+import './auth.css';
 
 export const Login = () => {
   const [username, setUsername] = useState('');
@@ -18,54 +17,52 @@ export const Login = () => {
     
     !result ? setFailedlogin(true) :  
       setFailedlogin(false)
-      sessionStorage.setItem('id', result.id);
-      sessionStorage.setItem('username', result.username);
+      sessionStorage.setItem('user', result.id);
+      sessionStorage.setItem('loggedIn', true);
       navigate('/products')
   };
 
   return (
-    <section className={styles.section}>
+    <section className='auth'>
       <form onSubmit={handleSubmit}>
-        <div className={styles.field}>
-          <label className={styles.label}>Username</label>
-          <input className={styles.input} 
-            type="text" 
+        <div className='field'>
+          <label>Username</label>
+          <input type="text" 
             value={username} 
             onChange={({target}) => setUsername(target.value)}
           />
         </div>
 
-        <div className={styles.field}>
-          <label className={styles.label}>Password</label>
-          <input className={styles.input} 
-            type="text" 
+        <div className='field'>
+          <label>Password</label>
+          <input type="text" 
             value={password} 
             onChange={({target}) => setPassword(target.value)}
           />
         </div>
 
-        { failedLogin === true && <h5 className={styles.h5}>Incorrect Details</h5>}
+        { failedLogin === true && <h5 className='auth'>Incorrect Details</h5>}
 
-        <div className={styles.field}>
-          <button className={styles.authButton} type="submit">Log In!</button>
+        <div className='field'>
+          <button className='auth' type="submit">Log In!</button>
         </div>
       </form>
 
-      <div className={styles.field}>
-        <h6 className={styles.h6}>or log in with</h6>
+      <div className='field'>
+        <h6 className='auth'>or log in with</h6>
         <a href='http://localhost:3001/auth/google'>
-          <button className={styles.authButton}>Google</button>
+          <button className='auth'>Google</button>
         </a>
         
         <a href='http://localhost:3001/auth/facebook'>
-          <button className={styles.authButton}>Facebook</button>
+          <button className='auth'>Facebook</button>
         </a>
       </div>
 
-      <div className={styles.field}>
+      <div className='field'>
         <h6>Don't have an account?</h6>
         <Link to='/registration'>
-          <button className={styles.authButton}>
+          <button className='auth'>
             Register
           </button>
         </Link>

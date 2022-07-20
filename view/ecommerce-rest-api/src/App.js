@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { Search } from './components/Search/search';
+import React from 'react';
 import { Home } from './components/home/home';
 import { Login } from './components/auth/login';
 import { Registration } from './components/auth/registration'
@@ -9,14 +8,12 @@ import { Profile } from './components/profile/profile';
 import { Route, Routes } from 'react-router-dom';
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [user, setUser] = useState({});
-  const [cart, setCart] = useState({});
-
   return (
-    <div className="App" style={{width: '100vw', height: '100vh'}}>
-      {/* searchbar will not render if URL =/login or /registration /redirect*/}
-      <Search/>
+    <div className="App" 
+      style={{
+        position: 'relative', 
+        width: '100vw', 
+        height: '100vh'}}>
       <Routes>
         <Route 
           path="" 
@@ -32,15 +29,15 @@ function App() {
         />
         <Route 
           path="/redirect" 
-          element={ <Redirect 
-                      setLoggedIn={setLoggedIn} 
-                      setUser={setUser}
-                      setCart={setCart}
-                    /> }
+          element={ 
+            <Redirect/>
+          }
         />
         <Route 
           path="/products" 
-          element={ <Products/> }
+          element={ 
+            <Products/> 
+          }
         />
         <Route 
           path="/profile" 

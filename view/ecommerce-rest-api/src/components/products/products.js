@@ -1,29 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Filters } from './filters';
-import { getLastCart } from '../../api/index';
-
-// useEffect() will fetch products from the database and save them in state
-// Error or loading states will be rendered while waiting for promise to resolve
-// .map() the result and display <Product/> for each element with appropriate props for rendering
+import { Product } from './product';
+import { Search } from '../Search/search';
+import { getProducts } from '../../api/index';
+import './products.css';
 
 export const Products = () => {
-    
-  const handleClick = async () => {
-    const result = await getLastCart(sessionStorage.getItem('id'));
-    // console.log(result);
-    !result ? sessionStorage.setItem('cartId', null) : sessionStorage.setItem('cartId', result)
-    // console.log(sessionStorage.getItem('userId'))
-  };
+  const [error, setError] = useState(); 
+  const [products, setProducts] = useState([]);
+  const [urlQueryString, setUrlQueryString] = useState('');
+
+
+  useEffect(() => {
+    getProducts(urlQueryString).then(result => {
+      setProducts(result);
+      setError(false);
+    })
+    .catch(error => {
+      setError(error)
+    })
+  }, [urlQueryString])
+
+  const renderProducts = () => {
+    if (error) {
+      return <p>{error} <br/>Please refresh the page.</p>
+    } 
+    else if (!error && products.length === 0) {
+      return <p>No results! Please reset your filters</p>
+    }
+    return (
+      <ul>
+      { 
+        products.map(product => 
+          <Product key={product.id} 
+                   product={product}/>) 
+      }
+      </ul>
+    )
+  }
 
   return (
     <>
-      <div>I am the Products page</div>
-        <button onClick={handleClick}>
-          Add Cart to session storage
-        </button>
-      <aside>
-        <Filters/>
-      </aside>
+      <header className='segments'>
+        <Search 
+          setUrlQueryString={setUrlQueryString}
+          urlQueryString={urlQueryString}
+        />
+      </header>
+      <div className='wrapper'>
+        <aside className='segments'>
+          <Filters 
+            setUrlQueryString={setUrlQueryString}
+          />
+        </aside>
+        <main className='segments'>
+          {renderProducts()}
+        </main>
+      </div>
     </>
   )
 }

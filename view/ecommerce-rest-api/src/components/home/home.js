@@ -1,24 +1,24 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import styles from './home.module.css';
+import './home.css';
 
 export const Home = () => {
   return (
-    <div className={styles.homeContainer}>
-      <div className={styles.title}>
+    <div className='container'>
+      <div className='title'>
         Welcome to my shop!
       </div>
-      <div className={styles.top}>
+      <div className='top'>
         <Link to="/products">
-          <button className={styles.home_button} id='shop-now'>Shop Now!</button>
+          <button className='home' id='shop-now'>Shop Now!</button>
         </Link>
       </div>
-      <div className={styles.bottom}>
+      <div className='bottom'>
         <Link to="/login">
-          <button className={styles.lower_button}>Log in</button>
+          <button className='home-auth'>Log in</button>
         </Link>
         <Link to="/registration">
-          <button className={styles.lower_button}>Register</button>
+          <button className='home-auth'>Register</button>
         </Link>
       </div>
     </div>

@@ -1,0 +1,64 @@
+form.filter {
+  display: inline-block;
+}
+
+form.filter > input, form.filter > select {
+  height: 30px;
+  margin: 8px 0;
+  width: 200px;
+  padding: 0;
+}
+
+form.filter > [type=submit] {
+  position: relative;
+  left: 160px;
+  height: 31px;
+  width: 35px;
+  display: block;
+}
+
+h4.filter {
+  font-size: 20px;
+  padding-bottom: 5px;
+  border-bottom: 1.5px solid grey;
+}
+
+ul.filter {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 0
+}
+
+ul.filter > li {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  height: 40px;
+  margin: 0 auto;
+}
+
+button.filter {
+  height: 100%;
+  width: 100%;
+  margin: 5px 0;
+  background-color: rgb(245, 245, 245);
+  border: 0.5px solid rgb(140, 139, 139)
+}
+
+button.filter:hover {
+  background-color: rgb(200, 222, 236);
+}
+
+button.filter:active {
+  border: 2px solid black;
+}
+
+button.active {
+  height: 100%;
+  width: 100%;
+  margin: 5px 0;
+  background-color: rgb(162, 223, 251);
+  border: 0.5px solid rgb(140, 139, 139);
+}

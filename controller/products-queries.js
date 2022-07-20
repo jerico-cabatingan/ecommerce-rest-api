@@ -8,18 +8,46 @@ const getProducts = (request, response) => {
   let name; 
   request.query.name ? name = `%${request.query.name.toLowerCase()}%` : name = '%%';
 
-  pool.query('SELECT * FROM items WHERE category LIKE $1 AND name LIKE $2 ORDER BY price ASC;', [category, name], (error, results) => {
+  let minPrice; 
+  request.query.minPrice ? minPrice = Number(request.query.minPrice) : minPrice = 0;
+
+  let maxPrice; 
+  request.query.maxPrice ? maxPrice = Number(request.query.maxPrice) : maxPrice = 1000000;
+
+  let sort; 
+  request.query.sort ? sort = request.query.sort.toLowerCase().toString() : sort = 'id';
+
+  let order; 
+  request.query.order ? order = request.query.order.toUpperCase().toString() : order = 'ASC';
+
+  pool.query(`SELECT * FROM items WHERE category LIKE $1 AND name LIKE $2 AND price >= cast($3 as money) AND price <= cast($4 as money) ORDER BY ${sort} ${order};`, 
+  [category, name, minPrice, maxPrice], 
+  (error, results) => {
     if (error) {
-      response.status(400).send(error)
+      response.status(400).send(error.stack)
     }
     else if (results.rows.length === 0) {
-      response.send('No results match your search filter')
+      response.send([])
     }
     else if (results.rows.length > 0 ) {
       response.status(200).json(results.rows);
     }
   })
 };
+
+const getCategories = (request, response) => {
+  pool.query('SELECT DISTINCT category FROM items;', (error, results) => {
+    if (error) {
+      response.status(400).send(error)
+    }
+    else if (results.rows.length === 0) {
+      response.sendStatus(404)
+    }
+    else if (results.rows.length > 0 ) {
+      response.status(200).json(results.rows);
+    }
+  })
+}
 
 
 const postProduct = (request, response) => {
@@ -119,6 +147,7 @@ const getIds = (request, response, next) => {
 
 module.exports = {
   getProducts,
+  getCategories,
   postProduct,
   getProductById,
   deleteProductById,

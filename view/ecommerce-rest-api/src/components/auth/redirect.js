@@ -2,24 +2,28 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUser, getLastCart } from '../../api/index';
 
-export const Redirect = ({setLoggedIn, setUser, setCart}) => {
+export const Redirect = () => {
   const navigate = useNavigate();
 
-  useEffect(async () => {
-    const user = await getUser();
-    user ? setUser(user) : setUser(null)
-    console.log(user);
+  useEffect(() => {
+    let mounted = true;
 
-    const cart = await getLastCart(user.id);
-    cart ? setCart(cart) : setCart(null)
-    console.log(cart);
-
-    !cart && !user ? navigate('/login') : 
-    navigate('/products')
-    setLoggedIn(true);
+    getUser().then(user => {
+      if (mounted) {
+        sessionStorage.setItem('user', user.id);
+        sessionStorage.setItem('loggedIn', true);
+      }
+      return sessionStorage.getItem('loggedIn');
+    })
+    .then(loggedIn => {
+      if (loggedIn) {
+        mounted = false;
+        navigate('/products');
+      }
+    })
   }, []);
   
   return (
-    <div>Fetching your data....</div>
+    <div>fetching your data.....</div>
   );
 }

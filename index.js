@@ -12,8 +12,8 @@ app.use(cookieParser());
 
 // Allow cross origin resource sharing
 app.use(cors({
-  origin: '*',
-  method: ['GET', 'POST', 'OPTIONS', 'DELETE', 'PUT'],
+  origin: ' http://localhost:3000',
+  // method: ['GET', 'POST', 'OPTIONS', 'DELETE', 'PUT'],
   credentials: true,
 }));
 
@@ -21,10 +21,11 @@ const store = new session.MemoryStore();
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
-    cookie: { 
-      maxAge: 1000 * 60 * 60 * 24, 
-      sameSite: "none" 
-    },
+    // cookie: { 
+    //   httpOnly: true,
+    //   maxAge: 1000 * 60 * 60 * 24, 
+    //   sameSite: "none" 
+    // },
     resave: false,
     saveUninitialized: true,
     store

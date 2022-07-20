@@ -1,0 +1,20 @@
+.tile {
+  min-width: 200px;
+  max-width: 300px;
+  padding: 20px 20px 5px;
+  box-shadow: 0 0 10px 1px rgba(128, 128, 128, 0.408);
+  margin: 15px auto;
+}
+
+.tile > img {
+  width: 100%;
+  border: 1px solid black;
+}
+
+.tile > h4, .tile > h2 {
+  margin: 10px 0 20px;
+}
+
+.tile > h4 {
+  text-align: right;
+}

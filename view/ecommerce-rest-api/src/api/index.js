@@ -27,6 +27,8 @@ export const login = async (username, password) => {
   try {
     const response = await fetch(`${root}/auth/login`, {
       method: 'POST',
+      redirect: 'follow',
+      credentials: 'include',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
@@ -68,13 +70,13 @@ export const logout = async (username, password) => {
 export const getLastCart = async (userId) => {
   try {
   const response = await fetch(`${root}/carts/session/${userId}`, { 
-    credentials: "include", 
-    headers: {'Access-Control-Allow-Origin': 'http://localhost:3000/'} 
+    credentials: "include"
   });
-    console.log(response)
+    // console.log(response)
 
     if (response.ok) {
       const json = await response.json();
+      console.log(json)
       return json;
     }
     throw new Error('Could not get active cart')
@@ -86,18 +88,38 @@ export const getLastCart = async (userId) => {
 
 export const getUser = async () => {
   try {
-    const response = await fetch(`${root}/users/active`, { 
-      credentials: "include", 
-      headers: {'Access-Control-Allow-Origin': 'http://localhost:3000/'}
+    const response = await fetch(`${root}/auth/redirect`, {
+      credentials: 'include'
     });
-    console.log(response)
+    // console.log(response)
     if (response.ok) {
       const json = await response.json();
-      console.log(json)
+      // console.log(json)
+      return json;
     };
-    throw Error ('Unable to get User.')
+    throw Error('Unable to get User.')
   }
   catch (error) {
     console.log(error)
   }
 };
+
+// Get prodcuts to redner product page
+
+export const getProducts = async (queryString) => {
+  const response = await fetch(`${root}/products/${queryString}`)
+
+  if (response.ok) {
+    const json = await response.json();
+    return json 
+  }
+}
+// Get categories to render category filter list
+export const getCategories = async () => {
+  const response = await fetch(`${root}/products/categories`);
+
+  if (response.ok) {
+    const json = await response.json()
+    return json;
+  }
+}

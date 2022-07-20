@@ -20,7 +20,7 @@ authRouter.get('/google',
 
 authRouter.get('/google/callback', 
   passport.authenticate('google', { 
-    successRedirect: '/auth/redirect', 
+    successRedirect: 'http://localhost:3000/redirect', 
     failureRedirect: 'http://localhost:3000/login'
   })
 );
@@ -31,7 +31,7 @@ authRouter.get('/facebook',
 
 authRouter.get('/facebook/callback',
   passport.authenticate('facebook', { 
-    successRedirect: '/auth/redirect', 
+    successRedirect: 'http://localhost:3000/redirect', 
     failureRedirect: 'http://localhost:3000/login'
   })
 );
@@ -39,8 +39,7 @@ authRouter.get('/facebook/callback',
 authRouter.get('/redirect', 
   (request, response) => {
     console.log('redirect triggered')
-    console.log(request.session)
-    response.send(request.session.passport);
+    response.send(request.user);
  }
 );
 
