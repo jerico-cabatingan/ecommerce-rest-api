@@ -10,11 +10,9 @@ export const registerNewUser = async (fname, lname, email, username, password) =
       },
       body: JSON.stringify({ fname, lname, email, username, password })
     });
-    // console.log(response);
 
     if (response.ok) {
       const json = await response.json();
-      // console.log(json)
       return json;
     }
   }
@@ -51,7 +49,7 @@ export const login = async (username, password) => {
   }
 };
 
-export const logout = async (username, password) => {
+export const logout = async () => {
   try {
     const response = await fetch(`${root}/auth/logout`);
     if (response.ok) {
@@ -69,14 +67,12 @@ export const logout = async (username, password) => {
 // Returns cart with most recent timestamp and is_checked_out === false for a given userId
 export const getLastCart = async (userId) => {
   try {
-  const response = await fetch(`${root}/carts/session/${userId}`, { 
-    credentials: "include"
-  });
-    // console.log(response)
+    const response = await fetch(`${root}/carts/session/${userId}`, { 
+      credentials: "include"
+    });
 
     if (response.ok) {
       const json = await response.json();
-      console.log(json)
       return json;
     }
     throw new Error('Could not get active cart')
@@ -86,15 +82,49 @@ export const getLastCart = async (userId) => {
   }
 };
 
+export const getCartItems = async (cartId) => {
+  try {
+    const response = await fetch(`${root}/carts/${cartId}`, { 
+      credentials: "include"
+    });
+
+    if (response.ok) {
+      const json = await response.json();
+      return json;
+    }
+    throw new Error('Could not get cart items')
+  }
+  catch (error) {
+    console.log(error);
+  }
+};
+
+export const getOrders = async (userId) => {
+  try {
+    const response = await fetch(`${root}/orders/user/${userId}`, { 
+      credentials: "include"
+    });
+
+    if (response.ok) {
+      const json = await response.json();
+      return json;
+    }
+    throw new Error('Could not get orders')
+  }
+  catch (error) {
+    console.log(error);
+  }
+};
+
+
 export const getUser = async () => {
   try {
     const response = await fetch(`${root}/auth/redirect`, {
       credentials: 'include'
     });
-    // console.log(response)
+
     if (response.ok) {
       const json = await response.json();
-      // console.log(json)
       return json;
     };
     throw Error('Unable to get User.')

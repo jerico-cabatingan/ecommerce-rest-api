@@ -1,0 +1,85 @@
+header.profile {
+  background-color: rgb(224, 224, 224);
+  padding: 12px;
+  height: 2.5vh;
+  border-bottom: 1px solid grey;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+section.profile {
+  max-width: 600px;
+  box-shadow: 0 0 10px 1px rgba(128, 128, 128, 0.408);
+  margin: 0px auto 30px;
+  padding: 10px 30px 40px;
+}
+
+ul {
+  list-style: none;
+  width: 100%;
+  padding: 0;
+}
+
+li.profile > div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header.profile > button.profile {
+  padding: 0 15px;
+}
+
+button.profile {
+  height: 40px;
+  border: 1px solid black;
+  border-radius: 10px;
+}
+
+button.profile:hover {
+  background-color: rgb(200, 222, 236);
+}
+
+.headings {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  margin: 0 auto;
+  border-bottom: 1px solid black;
+}
+
+h1.profile { 
+  margin-bottom: 30px;
+  font-size: 30px;
+}
+
+.footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto;
+  border-top: 1px solid black;
+}
+
+#filler {
+  margin-left: 110px;
+}
+
+li.profile > div.selected {
+  background-color: rgb(216, 228, 235);
+}
+
+section.profile:first-child {
+  display: block;
+}
+
+button#reset {
+  background-color: none;
+  border: none;
+  float: right;
+}

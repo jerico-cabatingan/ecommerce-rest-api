@@ -24,7 +24,23 @@ const getOrderById = (request, response) => {
   })
 };
 
+const getOrdersByUserId = (request, response) => {
+  const userId = request.params.userId;
+
+  pool.query('SELECT * FROM orders WHERE user_id = $1;', [userId], (error, results) => {
+    if (error) {
+      response.status(400).send(error.detail)
+    }
+    else if (results.rows.length === 0) {
+      response.send([])
+    }
+    else if (results.rows.length > 0)
+    response.status(200).json(results.rows);
+  })
+};
+
 module.exports = {
   getOrderById,
+  getOrdersByUserId,
   getOrders
 };

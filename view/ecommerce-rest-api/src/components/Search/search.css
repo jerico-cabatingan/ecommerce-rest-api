@@ -39,3 +39,7 @@ div.profile {
   background-position: center;
   background-size: 33px;
 }
+
+div.profile:hover {
+  border: 2px solid black
+}

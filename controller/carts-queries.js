@@ -4,7 +4,7 @@ const uuid = require('uuid').v4;
 
 const createCart = (request, response) => {
   const cartId = uuid();
-  const userId = request.session.passport.user.id;
+  const userId = request.user.id;
   const today = new Date().toUTCString();
  
   pool.query('INSERT INTO carts (id, user_id, timestamp) VALUES ($1, $2, $3);', [cartId, userId, today], (error) => {
@@ -71,15 +71,17 @@ const getCartById = (request, response) => {
 
 const createNewOrder = (request, response) => {
   const id = uuid();
-  const userId = request.session.passport.user.id;
+  const userId = request.user.id;
   const cartId = request.params.id;
   const totalPrice = request.cartTotal;
+  const date = new Date().toUTCString();
 
-  pool.query('INSERT INTO orders (id, user_id, cart_id, total_price) VALUES ($1, $2, $3, $4);', [id, userId, cartId, totalPrice], (error, results) => {
+  pool.query('INSERT INTO orders (id, user_id, cart_id, total_price, date) VALUES ($1, $2, $3, $4, $5);', [id, userId, cartId, totalPrice, date], (error, results) => {
     if (error) {
       response.status(200).send(error);
-    }
-    response.status(201).send(`You have been charged a total of ${totalPrice}`);
+    } else {
+      response.status(201).send(`You have been charged a total of ${totalPrice}`);
+    };
   })
 };
 
@@ -131,7 +133,7 @@ const getLastActiveCart = (request, response, next) => {
       response.send(error)
       console.log(error)
     } else if (results.length === 0) {
-      response.send({})
+      response.send([])
     }
     response.status(200).send(results.rows[0])
   });
