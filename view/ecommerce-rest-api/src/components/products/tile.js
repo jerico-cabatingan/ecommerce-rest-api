@@ -1,5 +1,6 @@
 import React from 'react';
-import './product.css';
+import { useNavigate } from  'react-router-dom';
+import './tile.css';
 
 const imgSrc = [
   'https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-collection-6_large.png?format=webp&v=1530129217',
@@ -11,9 +12,12 @@ const imgSrc = [
 
 ];
 
-export const Product = ({product}) => {
+export const Tile = ({product}) => {
+  const navigate = useNavigate();
+  
   return (
-    <div className='tile'>
+    <div className='tile'
+      onClick={() => {navigate(`/products/${product.id}`)}}>
       <img src={imgSrc[Math.floor(Math.random()* 6)]} alt="Not available" />
       <h2>{product.name.charAt(0).toUpperCase() + product.name.slice(1)}</h2>
       <h4>Price: {product.price}</h4>

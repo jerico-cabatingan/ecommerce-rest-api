@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Filters } from './filters';
-import { Product } from './product';
+import { Tile } from './tile';
 import { Search } from '../Search/search';
 import { getProducts } from '../../api/index';
 import './products.css';
@@ -32,8 +32,10 @@ export const Products = () => {
       <ul>
       { 
         products.map(product => 
-          <Product key={product.id} 
-                   product={product}/>) 
+          <Tile key={product.id} 
+                product={product}
+          />
+        )
       }
       </ul>
     )

@@ -153,3 +153,13 @@ export const getCategories = async () => {
     return json;
   }
 }
+
+export const getProduct = async (productId) => {
+  const response = await fetch(`${root}/products/${productId}`);
+
+  if (response.ok) {
+    const json = await response.json()
+
+    return json;
+  }
+}

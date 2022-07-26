@@ -5,6 +5,7 @@ import { Registration } from './components/auth/registration'
 import { Redirect } from './components/auth/redirect';
 import { Products } from './components/products/products';
 import { Profile } from './components/profile/profile';
+import { Item } from './components/item/item';
 import { Route, Routes } from 'react-router-dom';
 
 function App() {
@@ -37,6 +38,12 @@ function App() {
           path="/products" 
           element={ 
             <Products/> 
+          }
+        />
+        <Route 
+          path="/products/:productId" 
+          element={ 
+            <Item/> 
           }
         />
         <Route 
